@@ -4,6 +4,7 @@ import unito.model.EmailBean;
 import unito.controller.persistence.*;
 
 import java.net.ServerSocket;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ServerManager {
@@ -34,7 +35,16 @@ public class ServerManager {
         return null;
     }
 
-    public boolean autenticateThisAccount(ValidAccount toAutenticate) {
+    public static List<ValidAccount> getValidAccountList() {
+        System.out.println("getValidAccountList() called.");
+        List<ValidAccount> result = new ArrayList<ValidAccount>();
+        for(EmailBean i : emailBeans) {
+            result.add(i.getEmailAccountAssociated());
+        }
+        return result;
+    }
+
+    public static boolean autenticateThisAccount(ValidAccount toAutenticate) {
         //TODO
         System.out.println("autenticateThisAccount() called.");
         for(EmailBean i : emailBeans) {

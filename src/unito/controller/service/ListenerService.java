@@ -1,6 +1,7 @@
 package unito.controller.service;
 
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.fxml.Initializable;
 import unito.ServerManager;
 import unito.controller.BaseController;
 import unito.view.ViewFactory;
@@ -8,9 +9,15 @@ import unito.view.ViewFactory;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 
-public class ListenerService implements Runnable {
+/**
+ * Classe Runnable, con un socket sempre in ascolto accetta le richieste di connessione da parte dei client
+ * Poi DELEGA A SERVERSERVICE il compito di fare il riconoscimento delle credenziali
+ */
+public class ListenerService implements Runnable, Initializable {
 
     private ServerSocket listener;
     private ExecutorService serverThreadPool;
@@ -19,7 +26,6 @@ public class ListenerService implements Runnable {
     public ListenerService( ExecutorService serverThreadPool, ServerManager serverManager) {
         this.serverThreadPool = serverThreadPool;
         this.serverManager = serverManager;
-        listener = openServerSocket();
     }
 
     private ServerSocket openServerSocket() {
@@ -37,9 +43,10 @@ public class ListenerService implements Runnable {
     public void run() {
         for(;;) {
 
+            System.out.println("\n # ListenerService is now running.... #");
             Socket incoming = null; //pending for new connection
             try {
-                System.out.println("listen to 8189;");
+                System.out.println("# ListenerService -> Listening to 8189... #");
                 incoming = listener.accept();
                 System.out.println("Connessione in entrata accettata; autenticazione del client presa in carico dal ThreadPool.");
             } catch (IOException e) {
@@ -65,5 +72,10 @@ public class ListenerService implements Runnable {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        listener = openServerSocket();
     }
 }

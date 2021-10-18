@@ -2,6 +2,7 @@ package unito.controller.service;
 
 import unito.ServerManager;
 import unito.controller.BaseController;
+import unito.controller.persistence.ValidEmail;
 import unito.model.*;
 import unito.view.ViewFactory;
 
@@ -58,7 +59,7 @@ public class ClientRequestService extends BaseController implements Runnable {
                         {
                             System.out.println("Connessione ACCETTATA");
 
-                            List<Email> emailList = ServerManager.getEmailsList();
+                            List<ValidEmail> emailList = ServerManager.getEmailsList(temp.getAddress());
 
                             outStream.writeObject(emailList);
 

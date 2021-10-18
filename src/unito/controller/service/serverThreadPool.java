@@ -13,6 +13,7 @@ public class serverThreadPool {
 
 
 
+/*
 
     public serverThreadPool() {
         System.out.println("Lancio un task con ritardo");
@@ -35,6 +36,7 @@ public class serverThreadPool {
         System.out.println("\nIl totale �: " + total);
         exec.shutdown();
     }
+*/
 
-    }
 }
+

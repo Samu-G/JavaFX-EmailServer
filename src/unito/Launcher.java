@@ -1,9 +1,7 @@
 package unito;
 
 import javafx.application.Application;
-import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
-import unito.controller.MainWindowController;
 import unito.controller.service.ListenerService;
 import unito.controller.service.*;
 import unito.model.EmailBean;
@@ -23,8 +21,10 @@ public class Launcher extends Application {
     private static final int NUM_OF_THREAD = 4;
 
     //init console reader pipe per l'input proveniente da sys.out e sys.err
+/*
     private final PipedInputStream pipeIn1 = new PipedInputStream();
     private final PipedInputStream pipeIn2 = new PipedInputStream();
+*/
 
     //loading from persistence all email Beans
     private PersistenceAccess persistenceAccess = new PersistenceAccess();
@@ -40,23 +40,36 @@ public class Launcher extends Application {
     ExecutorService serverThreadPool = Executors.newFixedThreadPool(NUM_OF_THREAD);
 
     //init listener service
-    ListenerService listener = new ListenerService(serverThreadPool, serverManager);
+    /* ListenerService è un servizio che viene mandato in esecuzione all'inizio del programma ed andrà ad ascoltare
+    * tutte le incoming request che arrivano, e avvia il servizio dedicato al fornire i mail beans*/
+    ListenerService listenerService = new ListenerService(serverThreadPool, serverManager);
 
     //init thread
-    private Thread listenerServiceThread = new Thread(listener);
-    private Thread consoleReader = new Thread();
+    private Thread listenerServiceThread = new Thread(listenerService); //Thread dedicato a listenerService
 
+/*
+    private Thread consoleReader = new Thread();
+*/
     @Override
     public void start(Stage primaryStage) throws Exception {
         //init pipein*
+/*
         setUpPipeOutput(pipeIn1, pipeIn2);
+*/
         //TODO: Classe ReaderService da implementare
+/*
         ReaderService obj = new ReaderService(pipeIn1, pipeIn2);
         consoleReader = new Thread();
-        listenerServiceThread.start();
+*/
         //show view
         ViewFactory viewFactory = new ViewFactory(serverManager);
         viewFactory.showMainWindow();
+
+        /* SERVICE STARRING HERE */
+        listenerServiceThread.start();
+
+        /*---*/
+
         //Thread execution for reading output stream
 
 
@@ -67,16 +80,16 @@ public class Launcher extends Application {
 
     @Override
     public void stop() throws Exception {
+        //Salvataggio del file di persistenza
         persistenceAccess.saveEmailBeanToPersistence(emailBeans);
-
         //stop listener
-        listener.closeServerSocket();
+        listenerService.closeServerSocket();
         //stop ThreadPool
         serverThreadPool.shutdown();
         //exit(0)
     }
 
-    void setUpPipeOutput(PipedInputStream pipeIn1, PipedInputStream pipeIn2) {
+    static void setUpPipeOutput(PipedInputStream pipeIn1, PipedInputStream pipeIn2) {
         try {
             PipedOutputStream pout = new PipedOutputStream(pipeIn1);
             System.setOut(new PrintStream(pout, true));
