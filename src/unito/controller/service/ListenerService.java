@@ -17,15 +17,17 @@ import java.util.concurrent.ExecutorService;
  * Classe Runnable, con un socket sempre in ascolto accetta le richieste di connessione da parte dei client
  * Poi DELEGA A SERVERSERVICE il compito di fare il riconoscimento delle credenziali
  */
-public class ListenerService implements Runnable, Initializable {
+public class ListenerService implements Runnable {
 
     private ServerSocket listener;
     private ExecutorService serverThreadPool;
     private ServerManager serverManager;
 
-    public ListenerService( ExecutorService serverThreadPool, ServerManager serverManager) {
+    public ListenerService(ExecutorService serverThreadPool, ServerManager serverManager) {
         this.serverThreadPool = serverThreadPool;
         this.serverManager = serverManager;
+        listener = openServerSocket();
+
     }
 
     private ServerSocket openServerSocket() {
@@ -41,19 +43,19 @@ public class ListenerService implements Runnable, Initializable {
 
     @Override
     public void run() {
-        for(;;) {
+        for (; ; ) {
 
-            System.out.println("\n # ListenerService is now running.... #");
+            System.out.println("\n# ListenerService is now running.... #");
             Socket incoming = null; //pending for new connection
             try {
                 System.out.println("# ListenerService -> Listening to 8189... #");
                 incoming = listener.accept();
-                System.out.println("Connessione in entrata accettata; autenticazione del client presa in carico dal ThreadPool.");
+                System.out.println("# ListenerService -> Connessione in entrata accettata; autenticazione del client presa in carico dal ServerService. #");
+
+
             } catch (IOException e) {
-                System.out.println("Errore nell'apertura del Socket in entrata.");
                 e.printStackTrace();
             }
-
             //init dedicated socket service
             Runnable task = new ServerService(incoming, serverManager);
 
@@ -61,21 +63,22 @@ public class ListenerService implements Runnable, Initializable {
             serverThreadPool.execute(task);
         }
 
+
     }
 
     public void closeServerSocket() {
         //closing ServerSocket
-        if(listener != null) {
-            try {
-                listener.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (listener != null) {
+            if (listener.isClosed()) {
+                try {
+                    listener.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+        } else {
+            System.out.println("listener è null");
         }
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        listener = openServerSocket();
-    }
 }

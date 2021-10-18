@@ -23,7 +23,6 @@ public class ServerManager {
      * @return Lista di ValidEmail
      */
     public static List<ValidEmail> getEmailsList(String address) {
-        System.out.println("getEmailsList() called.");
         for(EmailBean i : emailBeans) {
             if(i.getEmailAccountAssociated().getAddress().equals(address)){
                 return i.getEmailsListAssociated();
@@ -36,7 +35,6 @@ public class ServerManager {
     }
 
     public static List<ValidAccount> getValidAccountList() {
-        System.out.println("getValidAccountList() called.");
         List<ValidAccount> result = new ArrayList<ValidAccount>();
         for(EmailBean i : emailBeans) {
             result.add(i.getEmailAccountAssociated());
@@ -46,9 +44,8 @@ public class ServerManager {
 
     public static boolean autenticateThisAccount(ValidAccount toAutenticate) {
         //TODO
-        System.out.println("autenticateThisAccount() called.");
         for(EmailBean i : emailBeans) {
-            System.out.println(i);
+            //System.out.println(i);
 
             if(i.getEmailAccountAssociated().equals(toAutenticate)) {
                 return true;

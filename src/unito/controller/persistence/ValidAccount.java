@@ -37,10 +37,11 @@ public class ValidAccount implements Serializable {
         if (obj.getClass() != this.getClass()) {
             System.out.println("classe non corretta");
             return false;
-        }
-        else {
+        } else {
+            /*
             System.out.println("confronto " + this.getAddress() + " con " + ((ValidAccount) obj).getAddress());
             System.out.println("confronto " + this.getPassword() + " con " + ((ValidAccount) obj).getPassword());
+            */
             if (this.address.equals(((ValidAccount) obj).getAddress())
                     && this.password.equals(((ValidAccount) obj).getPassword())) {
                 return true;

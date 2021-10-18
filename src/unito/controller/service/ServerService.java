@@ -23,7 +23,7 @@ public class ServerService implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("\n # ServerService is now running.... #");
+        System.out.println("\n# ServerService is now running.... #");
         System.out.println("# ServerService -> Dedicated thread is now running -> " + Thread.currentThread().getName() + " started at: " + new Date(System.currentTimeMillis()));
 
         try {
@@ -33,14 +33,14 @@ public class ServerService implements Runnable {
             try {
                 ValidAccount TryToConnect = ((ValidAccount) inStream.readObject());
                 if (TryToConnect != null) {
-                    System.out.println("# ServerService -> ValidAccount to authenticate recived. Waiting for authentication... # ");
-                     /* Autenticazione del Client... */
+                    System.out.println("# ServerService -> ValidAccount to authenticate received. Waiting for authentication... # ");
+                    /* Autenticazione del Client... */
                     autenticateAndSend(outStream, TryToConnect);
                 } else {
-                    System.out.println("# ServerService -> ValidAccount recived is NULL. ABORTING REQUEST # ");
+                    System.out.println("# ServerService -> ValidAccount received is NULL. ABORTING REQUEST # ");
                 }
             } catch (ClassNotFoundException e) {
-                System.out.println("# ServerService -> input Stream error: recived wrong object. #");
+                System.out.println("# ServerService -> input Stream error: received wrong object. #");
                 e.printStackTrace();
             } finally {
                 incoming.close();
@@ -53,12 +53,12 @@ public class ServerService implements Runnable {
     private void autenticateAndSend(ObjectOutputStream outStream, ValidAccount TryToConnect) throws IOException {
 
         if (TryToConnect != null)
-            System.out.println("# ServerService -> Trying to connect:\n# address: " + TryToConnect.getAddress() + "\n# password: " + TryToConnect.getPassword());
+            System.out.println("# ServerService -> Trying to connect:\n# ServerService -> address: " + TryToConnect.getAddress() + "\n# ServerService -> password: " + TryToConnect.getPassword());
 
         if (serverManager.autenticateThisAccount(TryToConnect)) {
             System.out.println("# ServerService -> " + TryToConnect.getAddress() + "Client authenticated. #");
             List<ValidEmail> emailList = ServerManager.getEmailsList(TryToConnect.getAddress());
-            System.out.println("# ServerService -> " + TryToConnect.getAddress() + "have: " + emailList.size() + " email. #");
+            System.out.println("# ServerService -> " + TryToConnect.getAddress() + " have: " + emailList.size() + " email. #");
 
             /* Scrivo sull'outStream la lista di email email */
             outStream.writeObject(emailList);

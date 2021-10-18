@@ -36,7 +36,6 @@ public class EmailAccount {
     public EmailAccount(String address, String password) {
         this.address = new SimpleStringProperty(address);
         this.password = new SimpleStringProperty(password);
-        this.toString();
 
         /*
         properties = new Properties();

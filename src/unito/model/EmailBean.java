@@ -29,8 +29,15 @@ public class EmailBean implements Serializable {
                 Objects.equals(obj.getAddress(), this.emailAccountAssociated.getAddress());
     }
 
+    public static void printBean(EmailBean bean) {
+        System.out.println(bean.toString());
+        for(ValidEmail email : bean.getEmailsListAssociated()){
+            System.out.println(email.toString());
+        }
+    }
+
     @Override
     public String toString() {
-        return "Questo è il Bean di " + getEmailAccountAssociated().getAddress();
+        return "Questo è il Bean di " + getEmailAccountAssociated().getAddress() + ", e contiene " + getEmailsListAssociated().size() + " Email.";
     }
 }

@@ -20,47 +20,52 @@ public class PersistenceAccess {
     private List<EmailBean> emailBeans;
 
     //TODO: da sistemare
-    public List<EmailBean> loadFromPersistenceEmailBean(){
+    public List<EmailBean> loadFromPersistenceEmailBean() {
 
         //example
-        emailBeans = exampleEmailBean();
+        //emailBeans = exampleEmailBean();
+        List<EmailBean> resultList = new ArrayList<>();
 
-        /*
+        /* Carico da File di persistenza gli emailBean */
         try {
-            FileInputStream fileInputStream = new FileInputStream(VALID_EMAIL_LOCATION);
+            /* Apro un FileInputStream e leggo il file .emailBeans.ser */
+            FileInputStream fileInputStream = new FileInputStream(VALID_EMAIL_BEANS_LOCATION);
+            /* Il file è composto da stringhe di testo che descrivono gli oggetti "emailBean" */
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            List<Email> persistedList = (List<Email>) objectInputStream.readObject();
-            emailList.addAll(persistedList);
-        } catch ( Exception e){
+            /* Leggo gli oggetti dallo stream con readObject() */
+            try {
+                List<EmailBean> persistedList = (List<EmailBean>) objectInputStream.readObject();
+
+                for (int i = 0; i < persistedList.size(); i++) {
+                    EmailBean.printBean(persistedList.get(i));
+                }
+
+                /* Decripto le password di ogni account della lista */
+                // decodePasswords(persistedList);
+
+                /* Aggiungo alla lista */
+                resultList.addAll(persistedList);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("fetch email completata");
 
-        try {
-            FileInputStream fileInputStream = new FileInputStream(VALID_ACCOUNTS_LOCATION);
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            List<EmailAccount> persistedList = (List<EmailAccount>) objectInputStream.readObject();
-            decodePasswords(persistedList);
-            accountList.addAll(persistedList);
-        } catch ( Exception e){
-            e.printStackTrace();
-        }
-        System.out.println("fetch account completata");
-        */
+        /* Ritorno la lista di account salvati nel file di oggetti .EmailBean.ser */
 
         return emailBeans;
     }
 
-    //TODO: da scambiare con una funzione che legge il file emailbean.ser
-    public List<EmailBean> exampleEmailBean() {
+    public static List<EmailBean> exampleEmailBean() {
         List<EmailBean> emailBeans = new ArrayList<>();
 
         //creo 10 email bean
         //ogni email bean contiene 10 email
         //example
-        for(int i=0; i<10; i++){
+        for (int i = 0; i < 10; i++) {
             emailBeans.add(new EmailBean(
-                    new ValidAccount("prova@gmail.com"+i, "pinco"+i ),
+                    new ValidAccount("prova@gmail.com" + i, "pinco" + i),
                     exampleEmailList()
             ));
         }
@@ -68,17 +73,17 @@ public class PersistenceAccess {
         return emailBeans;
     }
 
-    public List<ValidEmail> exampleEmailList(){
+    public static List<ValidEmail> exampleEmailList() {
         List<ValidEmail> emailList = new ArrayList<>();
-        for(int i=0; i<10; i++){
-            emailList.add(new ValidEmail("sender"+i, "recipients"+i, "subject"+i, "size"+i, "date"+i, "textMessage"+i));
+        for (int i = 0; i < 10; i++) {
+            emailList.add(new ValidEmail("sender" + i, "recipients" + i, "subject" + i, "size" + i, "date" + i, "textMessage" + i));
         }
         return emailList;
     }
 
 
     public void saveEmailBeanToPersistence(List<EmailBean> emailBeans) {
-        System.out.println("Saving emailBean to emailbean.ser");
+        System.out.print("\nSaving emailBean to emailbean....");
         try {
             File file = new File(VALID_EMAIL_BEANS_LOCATION);
             FileOutputStream fileOutputStream = new FileOutputStream(file);
@@ -89,7 +94,7 @@ public class PersistenceAccess {
         } catch (Exception e) {
             e.getMessage();
         }
-        System.out.println("DONE!");
+        System.out.print("DONE!");
     }
 
 

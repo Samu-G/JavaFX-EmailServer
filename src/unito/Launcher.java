@@ -28,7 +28,8 @@ public class Launcher extends Application {
 
     //loading from persistence all email Beans
     private PersistenceAccess persistenceAccess = new PersistenceAccess();
-    protected List<EmailBean> emailBeans = persistenceAccess.loadFromPersistenceEmailBean();
+    //protected List<EmailBean> emailBeans = persistenceAccess.loadFromPersistenceEmailBean();
+    protected List<EmailBean> emailBeans = PersistenceAccess.exampleEmailBean();
 
     //init model
     private ServerManager serverManager = new ServerManager(emailBeans);
@@ -41,7 +42,9 @@ public class Launcher extends Application {
 
     //init listener service
     /* ListenerService è un servizio che viene mandato in esecuzione all'inizio del programma ed andrà ad ascoltare
-    * tutte le incoming request che arrivano, e avvia il servizio dedicato al fornire i mail beans*/
+    * tutte le incoming request che arrivano, e avvia il servizio dedicato al fornire i mail beans
+    *
+    * */
     ListenerService listenerService = new ListenerService(serverThreadPool, serverManager);
 
     //init thread
@@ -71,9 +74,6 @@ public class Launcher extends Application {
         /*---*/
 
         //Thread execution for reading output stream
-
-
-
     }
 
     public static void main(String[] args ) { launch(args); }
