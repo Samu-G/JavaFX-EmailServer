@@ -53,10 +53,11 @@ public class MainWindowController extends BaseController implements Initializabl
     void startServerAction(ActionEvent event) {
 
         // these will be redirected to textArea on GUI
+        /*System.err.println("@@@@ERROR: This is error");
+        System.out.println("####OUTPUT : THIS IS ERROR");*/
 
-        System.err.println("@@@@ERROR: This is error");
-        System.out.println("####OUTPUT : THIS IS ERROR");
-
+        printConsole("@@@@ERROR: This is error" +
+                "\n####OUTPUT : THIS IS ERROR");
     }
 
     @FXML
@@ -64,13 +65,15 @@ public class MainWindowController extends BaseController implements Initializabl
 
     }
 
+    @FXML
+    void printConsole(String str) {
+        System.out.println(str);
+        console.appendText(str);
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         staticTxtArea = console;
     }
-
-
-
-
 
 }
