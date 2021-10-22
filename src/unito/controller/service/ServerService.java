@@ -45,6 +45,7 @@ public class ServerService implements Runnable {
                 e.printStackTrace();
             } finally {
                 incoming.close();
+                serverManager.writeOnConsole("Connection whit the client closed");
             }
         } catch (IOException e) {
             e.printStackTrace();

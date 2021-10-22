@@ -8,9 +8,7 @@ import java.util.*;
 
 public class EmailBean implements Serializable {
 
-    public ValidAccount getEmailAccountAssociated() {
-        return emailAccountAssociated;
-    }
+    public ValidAccount getEmailAccountAssociated() { return emailAccountAssociated; }
 
     public List<ValidEmail> getEmailsListAssociated() {
         return emailsListAssociated;

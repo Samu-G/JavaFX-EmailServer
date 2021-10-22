@@ -32,7 +32,7 @@ public class ListenerService implements Runnable {
 
     private ServerSocket openServerSocket() {
         System.out.println("openServerSocket() called.");
-        serverManager.writeOnConsole("openServerSocket() called.");
+        serverManager.writeOnConsole("openServerSocket() called.\n");
         try {
             ServerSocket serverSocket = new ServerSocket(8189);
             return serverSocket;
@@ -53,6 +53,8 @@ public class ListenerService implements Runnable {
                 incoming = listener.accept();
                 System.out.println("# ListenerService -> Connessione in entrata accettata; autenticazione del client presa in carico dal ServerService. #");
 
+                // AGGIUNTE!!!
+                serverManager.writeOnConsole("Connection accepted with the client.\n");
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -63,8 +65,6 @@ public class ListenerService implements Runnable {
             //starting runnable
             serverThreadPool.execute(task);
         }
-
-
     }
 
     public void closeServerSocket() {
@@ -80,6 +80,7 @@ public class ListenerService implements Runnable {
         } else {
             System.out.println("listener è null");
         }
+        System.out.println("\ncloseServerSocket() called.");
     }
 
 }

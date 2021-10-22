@@ -15,9 +15,7 @@ public class ServerManager {
     private static boolean quit;
     private MainWindowController mainWindowController;
 
-    public ServerManager(List<EmailBean> emailBeans) {
-        this.emailBeans = emailBeans;
-    }
+    public ServerManager(List<EmailBean> emailBeans) { this.emailBeans = emailBeans; }
 
     /**
      * Ritorna una lista di ValidEmail associata all'indirizzo passato come parametro
