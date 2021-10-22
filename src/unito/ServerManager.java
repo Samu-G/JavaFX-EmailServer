@@ -1,5 +1,6 @@
 package unito;
 
+import unito.controller.MainWindowController;
 import unito.model.EmailBean;
 import unito.controller.persistence.*;
 
@@ -12,6 +13,7 @@ public class ServerManager {
     private static List<EmailBean> emailBeans;
     private ServerSocket serverSocket;
     private static boolean quit;
+    private MainWindowController mainWindowController;
 
     public ServerManager(List<EmailBean> emailBeans) {
         this.emailBeans = emailBeans;
@@ -54,5 +56,12 @@ public class ServerManager {
         return false;
     }
 
+    public void setMainWindowController(MainWindowController controller) {
+        this.mainWindowController = controller;
+    }
+
+    public void writeOnConsole(String string) {
+        this.mainWindowController.printOnConsole(string);
+    }
 
 }

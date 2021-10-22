@@ -32,6 +32,7 @@ public class ListenerService implements Runnable {
 
     private ServerSocket openServerSocket() {
         System.out.println("openServerSocket() called.");
+        serverManager.writeOnConsole("openServerSocket() called.");
         try {
             ServerSocket serverSocket = new ServerSocket(8189);
             return serverSocket;

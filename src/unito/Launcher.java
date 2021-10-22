@@ -34,27 +34,34 @@ public class Launcher extends Application {
     //init model
     private ServerManager serverManager = new ServerManager(emailBeans);
 
-    //init view
-    ViewFactory viewFactory = new ViewFactory(serverManager);
-
     //init ThreadPool
     ExecutorService serverThreadPool = Executors.newFixedThreadPool(NUM_OF_THREAD);
 
-    //init listener service
-    /* ListenerService è un servizio che viene mandato in esecuzione all'inizio del programma ed andrà ad ascoltare
-    * tutte le incoming request che arrivano, e avvia il servizio dedicato al fornire i mail beans
-    *
-    * */
-    ListenerService listenerService = new ListenerService(serverThreadPool, serverManager);
+    ListenerService listenerService;
 
-    //init thread
-    private Thread listenerServiceThread = new Thread(listenerService); //Thread dedicato a listenerService
+    private Thread listenerServiceThread;
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        //init view
+        ViewFactory viewFactory = new ViewFactory(serverManager);
+        viewFactory.showMainWindow();
+
+        //init listener service
+        /* ListenerService è un servizio che viene mandato in esecuzione all'inizio del programma ed andrà ad ascoltare
+         * tutte le incoming request che arrivano, e avvia il servizio dedicato al fornire i mail beans
+         *
+         * */
+        listenerService = new ListenerService(serverThreadPool, serverManager);
+
+        //init thread
+        listenerServiceThread = new Thread(listenerService); //Thread dedicato a listenerService
 
 /*
     private Thread consoleReader = new Thread();
 */
-    @Override
-    public void start(Stage primaryStage) throws Exception {
+
+
         //init pipein*
 /*
         setUpPipeOutput(pipeIn1, pipeIn2);
@@ -64,9 +71,7 @@ public class Launcher extends Application {
         ReaderService obj = new ReaderService(pipeIn1, pipeIn2);
         consoleReader = new Thread();
 */
-        //show view
-        ViewFactory viewFactory = new ViewFactory(serverManager);
-        viewFactory.showMainWindow();
+
 
         /* SERVICE STARRING HERE */
         listenerServiceThread.start();
@@ -76,7 +81,9 @@ public class Launcher extends Application {
         //Thread execution for reading output stream
     }
 
-    public static void main(String[] args ) { launch(args); }
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
     public void stop() throws Exception {
@@ -94,7 +101,7 @@ public class Launcher extends Application {
             PipedOutputStream pout = new PipedOutputStream(pipeIn1);
             System.setOut(new PrintStream(pout, true));
         } catch (IOException | SecurityException e) {
-        e.printStackTrace();
+            e.printStackTrace();
         }
 
         try {

@@ -1,6 +1,7 @@
 package unito.controller.service;
 
 import unito.ServerManager;
+import unito.controller.MainWindowController;
 import unito.model.Email;
 import unito.controller.persistence.*;
 

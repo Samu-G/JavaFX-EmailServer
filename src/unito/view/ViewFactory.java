@@ -31,7 +31,8 @@ public class ViewFactory {
     public void showMainWindow(){
         System.out.println("showMainWindow() called.");
         System.out.println("initializing controller for the main window...");
-        BaseController controller = new MainWindowController(serverManager, this, "MainWindow.fxml");
+        MainWindowController controller = new MainWindowController(serverManager, this, "MainWindow.fxml");
+        serverManager.setMainWindowController(controller);
         initializeView(controller, "Client");
     }
 
