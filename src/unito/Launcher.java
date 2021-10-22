@@ -20,26 +20,16 @@ public class Launcher extends Application {
 
     private static final int NUM_OF_THREAD = 4;
 
-    //init console reader pipe per l'input proveniente da sys.out e sys.err
-/*
-    private final PipedInputStream pipeIn1 = new PipedInputStream();
-    private final PipedInputStream pipeIn2 = new PipedInputStream();
-*/
-
     //loading from persistence all email Beans
     private PersistenceAccess persistenceAccess = new PersistenceAccess();
     //protected List<EmailBean> emailBeans = persistenceAccess.loadFromPersistenceEmailBean();
     protected List<EmailBean> emailBeans = PersistenceAccess.exampleEmailBean();
 
-    //init model
-    private ServerManager serverManager = new ServerManager(emailBeans);
-
     //init ThreadPool
     ExecutorService serverThreadPool = Executors.newFixedThreadPool(NUM_OF_THREAD);
 
-    ListenerService listenerService;
-
-    private Thread listenerServiceThread;
+    //init model
+    private ServerManager serverManager = new ServerManager(emailBeans, serverThreadPool, this);
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -47,38 +37,6 @@ public class Launcher extends Application {
         ViewFactory viewFactory = new ViewFactory(serverManager);
         viewFactory.showMainWindow();
 
-        //init listener service
-        /* ListenerService è un servizio che viene mandato in esecuzione all'inizio del programma ed andrà ad ascoltare
-         * tutte le incoming request che arrivano, e avvia il servizio dedicato al fornire i mail beans
-         *
-         * */
-        listenerService = new ListenerService(serverThreadPool, serverManager);
-
-        //init thread
-        listenerServiceThread = new Thread(listenerService); //Thread dedicato a listenerService
-
-/*
-    private Thread consoleReader = new Thread();
-*/
-
-
-        //init pipein*
-/*
-        setUpPipeOutput(pipeIn1, pipeIn2);
-*/
-        //TODO: Classe ReaderService da implementare
-/*
-        ReaderService obj = new ReaderService(pipeIn1, pipeIn2);
-        consoleReader = new Thread();
-*/
-
-
-        /* SERVICE STARRING HERE */
-        listenerServiceThread.start();
-
-        /*---*/
-
-        //Thread execution for reading output stream
     }
 
     public static void main(String[] args) {
@@ -89,11 +47,13 @@ public class Launcher extends Application {
     public void stop() throws Exception {
         //Salvataggio del file di persistenza
         persistenceAccess.saveEmailBeanToPersistence(emailBeans);
-        //stop listener
-        listenerService.closeServerSocket();
+        //stop listenerService
+        serverManager.listenerService.closeServerSocket();
         //stop ThreadPool
-        serverThreadPool.shutdown();
-        //exit(0)
+        while (!serverThreadPool.isTerminated()) {
+            serverThreadPool.shutdown();
+        }
+        System.exit(0);
     }
 
     static void setUpPipeOutput(PipedInputStream pipeIn1, PipedInputStream pipeIn2) {

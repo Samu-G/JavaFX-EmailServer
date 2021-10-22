@@ -1,8 +1,6 @@
 package unito.controller.service;
 
 import unito.ServerManager;
-import unito.controller.MainWindowController;
-import unito.model.Email;
 import unito.controller.persistence.*;
 
 import java.io.IOException;
@@ -16,10 +14,16 @@ public class ServerService implements Runnable {
 
     private Socket incoming;
     protected ServerManager serverManager;
+    private ObjectInputStream inStream;
+    private ObjectOutputStream outStream;
+    private ValidAccount TryToConnect;
+    private ClientRequestType requestType;
+    private boolean authenticated;
 
     public ServerService(Socket incoming, ServerManager serverManager) {
         this.incoming = incoming;
         this.serverManager = serverManager;
+        this.authenticated = false;
     }
 
     @Override
@@ -28,15 +32,26 @@ public class ServerService implements Runnable {
         System.out.println("# ServerService -> Dedicated thread is now running -> " + Thread.currentThread().getName() + " started at: " + new Date(System.currentTimeMillis()));
 
         try {
-            ObjectInputStream inStream = new ObjectInputStream(incoming.getInputStream());
-            ObjectOutputStream outStream = new ObjectOutputStream(incoming.getOutputStream());
-
+            //aprire gli input e output stream;
+            openStream();
             try {
-                ValidAccount TryToConnect = ((ValidAccount) inStream.readObject());
+                this.TryToConnect = ((ValidAccount) inStream.readObject());
                 if (TryToConnect != null) {
                     System.out.println("# ServerService -> ValidAccount to authenticate received. Waiting for authentication... # ");
                     /* Autenticazione del Client... */
-                    autenticateAndSend(outStream, TryToConnect);
+                    if (authenticateClient()) {
+                        if (requestIdentification()) {
+                            switch (requestType) {
+                                case HANDSHAKING -> handShaking();
+                                case INVIOMESSAGGIO -> invioEmail();
+                                case RICEVIMESSAGGIO -> riceviEmail();
+                            }
+                        } else {
+                            System.out.println("# ServerService -> ClientRequestType IS INVALID. ABORTING REQUEST # ");
+                        }
+                    } else {
+                        //non mi sono autenticato
+                    }
                 } else {
                     System.out.println("# ServerService -> ValidAccount received is NULL. ABORTING REQUEST # ");
                 }
@@ -45,29 +60,99 @@ public class ServerService implements Runnable {
                 e.printStackTrace();
             } finally {
                 incoming.close();
-                serverManager.writeOnConsole("Connection whit the client closed");
+                closeStream();
+                serverManager.writeOnConsole("Connection with the client closed");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void autenticateAndSend(ObjectOutputStream outStream, ValidAccount TryToConnect) throws IOException {
+    private void riceviEmail() {
 
-        if (TryToConnect != null)
-            System.out.println("# ServerService -> Trying to connect:\n# ServerService -> address: " + TryToConnect.getAddress() + "\n# ServerService -> password: " + TryToConnect.getPassword());
+    }
 
-        if (serverManager.autenticateThisAccount(TryToConnect)) {
-            System.out.println("# ServerService -> " + TryToConnect.getAddress() + "Client authenticated. #");
-            List<ValidEmail> emailList = ServerManager.getEmailsList(TryToConnect.getAddress());
-            System.out.println("# ServerService -> " + TryToConnect.getAddress() + " have: " + emailList.size() + " email. #");
+    private void invioEmail() {
 
-            /* Scrivo sull'outStream la lista di email email */
-            outStream.writeObject(emailList);
-            /**/
-        } else {
-            System.out.println("# ServerService -> " + TryToConnect.getAddress() + "Client NOT authenticated. REJECTED #");
+    }
+
+    private void handShaking() {
+        System.out.println("# ServerService -> " + TryToConnect.getAddress() + "Client authenticated. #");
+        List<ValidEmail> emailList = ServerManager.getEmailsList(TryToConnect.getAddress());
+        System.out.println("# ServerService -> " + TryToConnect.getAddress() + " have: " + emailList.size() + " email. #");
+
+        /* Scrivo sull'outStream la lista di email email */
+        try {
+            this.outStream.writeObject(emailList);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        /**/
+
+        System.out.println("# ServerService -> " + TryToConnect.getAddress() + "Client NOT authenticated. REJECTED #");
+    }
+
+    private boolean requestIdentification() {
+        try {
+            this.requestType = ((ClientRequestType) inStream.readObject());
+        } catch (IOException | ClassNotFoundException e) {
+            //TODO: da gestire il caso in cui arriva un oggetto che non è un ClientRequestType
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    private void openStream() {
+        try {
+            this.inStream = new ObjectInputStream(this.incoming.getInputStream());
+            this.outStream = new ObjectOutputStream(this.incoming.getOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+
+    private void closeStream() {
+        try {
+            this.inStream.close();
+            this.outStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean authenticateClient() {
+        if (TryToConnect != null) {
+            System.out.println("# ServerService -> Trying to connect:\n# ServerService -> address: " + TryToConnect.getAddress() + "\n# ServerService -> password: " + TryToConnect.getPassword());
+        } else {
+            System.out.println("ValidAccount TryToConnect is null");
+            return false;
+        }
+
+        if (serverManager.authenticateThisAccount(TryToConnect)) {
+            try {
+                this.outStream.writeObject(ClientRequestResult.SUCCESS);
+                System.out.println("risultato spedito");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            this.authenticated = true;
+            return true;
+        } else {
+            try {
+                this.outStream.writeObject(ClientRequestResult.FAILED_BY_CREDENTIALS);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            this.authenticated = false;
+            return false;
+        }
+    }
+
+    private void autenticateAndSend() throws IOException {
+
+
+    }
+
 
 }

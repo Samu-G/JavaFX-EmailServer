@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import unito.Launcher;
 import unito.ServerManager;
 import unito.view.ViewFactory;
 
@@ -48,21 +49,26 @@ public class MainWindowController extends BaseController implements Initializabl
     @FXML
     void startServerAction(ActionEvent event) {
 
+        serverManager.writeOnConsole("SERVER IS STARTING...");
+        serverManager.listenerServiceThread.start();
         // these will be redirected to textArea on GUI
         /*System.err.println("@@@@ERROR: This is error");
         System.out.println("####OUTPUT : THIS IS ERROR");*/
-
-        printOnConsole("@@@@ERROR: This is error" +
-                "\n####OUTPUT : THIS IS ERROR\n");
     }
 
     @FXML
     void stopServerAction(ActionEvent event) {
-
+        try {
+            serverManager.launcher.stop();
+        } catch (Exception e) {
+            serverManager.writeOnConsole("ERROR: CAN'T SHOUTDOWN THE SERVER");
+            e.printStackTrace();
+        }
     }
 
     public void printOnConsole(String str) {
         //System.out.println(str);
+        console.appendText("\n");
         console.appendText(str);
     }
 

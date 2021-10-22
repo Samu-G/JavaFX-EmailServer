@@ -26,8 +26,6 @@ public class ListenerService implements Runnable {
     public ListenerService(ExecutorService serverThreadPool, ServerManager serverManager) {
         this.serverThreadPool = serverThreadPool;
         this.serverManager = serverManager;
-        listener = openServerSocket();
-
     }
 
     private ServerSocket openServerSocket() {
@@ -44,8 +42,9 @@ public class ListenerService implements Runnable {
 
     @Override
     public void run() {
-        for (; ; ) {
+        listener = openServerSocket();
 
+        for (; ; ) {
             System.out.println("\n# ListenerService is now running.... #");
             Socket incoming = null; //pending for new connection
             try {
@@ -53,22 +52,23 @@ public class ListenerService implements Runnable {
                 incoming = listener.accept();
                 System.out.println("# ListenerService -> Connessione in entrata accettata; autenticazione del client presa in carico dal ServerService. #");
 
-                // AGGIUNTE!!!
                 serverManager.writeOnConsole("Connection accepted with the client.\n");
 
-            } catch (IOException e) {
+                //init dedicated socket service
+                Runnable task = new ServerService(incoming, serverManager);
+
+                //starting runnable
+                serverThreadPool.execute(task);
+
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            //init dedicated socket service
-            Runnable task = new ServerService(incoming, serverManager);
-
-            //starting runnable
-            serverThreadPool.execute(task);
         }
     }
 
     public void closeServerSocket() {
         //closing ServerSocket
+        System.out.println("\ncloseServerSocket() called.");
         if (listener != null) {
             if (listener.isClosed()) {
                 try {
@@ -78,9 +78,8 @@ public class ListenerService implements Runnable {
                 }
             }
         } else {
-            System.out.println("listener è null");
+            System.out.println("\nSocket already closed.");
         }
-        System.out.println("\ncloseServerSocket() called.");
     }
 
 }

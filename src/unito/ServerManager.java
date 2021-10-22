@@ -1,21 +1,29 @@
 package unito;
 
 import unito.controller.MainWindowController;
+import unito.controller.service.ListenerService;
 import unito.model.EmailBean;
 import unito.controller.persistence.*;
 
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 public class ServerManager {
 
     private static List<EmailBean> emailBeans;
-    private ServerSocket serverSocket;
-    private static boolean quit;
     private MainWindowController mainWindowController;
+    public ListenerService listenerService;
+    public Thread listenerServiceThread;
+    public Launcher launcher;
 
-    public ServerManager(List<EmailBean> emailBeans) { this.emailBeans = emailBeans; }
+    public ServerManager(List<EmailBean> emailBeans, ExecutorService serverThreadPool, Launcher launcher) {
+        this.emailBeans = emailBeans;
+        this.listenerService = new ListenerService(serverThreadPool, this);
+        this.listenerServiceThread = new Thread(listenerService);
+        this.launcher = launcher;
+    }
 
     /**
      * Ritorna una lista di ValidEmail associata all'indirizzo passato come parametro
@@ -42,7 +50,7 @@ public class ServerManager {
         return result;
     }
 
-    public static boolean autenticateThisAccount(ValidAccount toAutenticate) {
+    public static boolean authenticateThisAccount(ValidAccount toAutenticate) {
         //TODO
         for(EmailBean i : emailBeans) {
             //System.out.println(i);
