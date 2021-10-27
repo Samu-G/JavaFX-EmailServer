@@ -5,14 +5,13 @@ import unito.controller.service.ListenerService;
 import unito.model.EmailBean;
 import unito.controller.persistence.*;
 
-import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 public class ServerManager {
 
-    private static List<EmailBean> emailBeans;
+    public static List<EmailBean> emailBeans;
     private MainWindowController mainWindowController;
     public ListenerService listenerService;
     public Thread listenerServiceThread;
@@ -33,7 +32,7 @@ public class ServerManager {
     public static List<ValidEmail> getEmailsList(String address) {
         for(EmailBean i : emailBeans) {
             if(i.getEmailAccountAssociated().getAddress().equals(address)){
-                return i.getEmailsListAssociated();
+                return i.getEmailListSended();
             } else {
                 System.out.println("c'è decisamente qualcosa che non va!");
                 return null;

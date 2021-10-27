@@ -2,11 +2,13 @@ package unito.controller.service;
 
 import unito.ServerManager;
 import unito.controller.persistence.*;
+import unito.model.EmailBean;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -69,10 +71,42 @@ public class ServerService implements Runnable {
     }
 
     private void riceviEmail() {
+        List<ValidEmail> validEmailRecived = new ArrayList<>();
+        try {
+            validEmailRecived = (List<ValidEmail>) inStream.readObject();
 
+            if (validEmailRecived != null) {
+
+                /* Aggiorno i bean dei destinatari */
+                for (EmailBean toCheck : serverManager.emailBeans) {
+                    for (ValidEmail v : validEmailRecived) {
+                        if (toCheck.getEmailAccountAssociated().getAddress() == v.getRecipients()) {
+                            toCheck.addEmail(v);
+                        }
+                    }
+                }
+
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private void invioEmail() {
+
+        try {
+            for (EmailBean toCheck : serverManager.emailBeans) {
+                if (toCheck.getEmailAccountAssociated().getAddress() == TryToConnect.getAddress()) {
+                    outStream.writeObject(
+                            toCheck.getNewEmail()
+                    );
+                    toCheck.setReadedAllMessage();
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
