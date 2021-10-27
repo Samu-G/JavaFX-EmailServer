@@ -149,10 +149,4 @@ public class ServerService implements Runnable {
         }
     }
 
-    private void autenticateAndSend() throws IOException {
-
-
-    }
-
-
 }

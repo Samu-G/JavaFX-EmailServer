@@ -2,12 +2,9 @@ package unito;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import unito.controller.service.ListenerService;
-import unito.controller.service.*;
 import unito.model.EmailBean;
 import unito.controller.persistence.PersistenceAccess;
 import unito.view.ViewFactory;
-
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -26,7 +23,7 @@ public class Launcher extends Application {
     protected List<EmailBean> emailBeans = PersistenceAccess.exampleEmailBean();
 
     //init ThreadPool
-    ExecutorService serverThreadPool = Executors.newFixedThreadPool(NUM_OF_THREAD);
+    private ExecutorService serverThreadPool = Executors.newFixedThreadPool(NUM_OF_THREAD);
 
     //init model
     private ServerManager serverManager = new ServerManager(emailBeans, serverThreadPool, this);

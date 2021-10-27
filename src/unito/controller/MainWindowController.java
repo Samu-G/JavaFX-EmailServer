@@ -42,24 +42,15 @@ public class MainWindowController extends BaseController implements Initializabl
     }
 
     @FXML
-    void getConnectedClientAction(ActionEvent event) {
-
-    }
-
-    @FXML
     void startServerAction(ActionEvent event) {
-
         serverManager.writeOnConsole("SERVER IS STARTING...");
         serverManager.listenerServiceThread.start();
-        // these will be redirected to textArea on GUI
-        /*System.err.println("@@@@ERROR: This is error");
-        System.out.println("####OUTPUT : THIS IS ERROR");*/
     }
 
     @FXML
     void stopServerAction(ActionEvent event) {
         try {
-            serverManager.launcher.stop();
+            serverManager.stopListenerServiceThread();
         } catch (Exception e) {
             serverManager.writeOnConsole("ERROR: CAN'T SHOUTDOWN THE SERVER");
             e.printStackTrace();
