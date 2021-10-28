@@ -17,12 +17,8 @@ public class Launcher extends Application {
 
     public static final int NUM_OF_THREAD = 4;
 
-    //load from persistence
-    //loading from persistence all email Beans
-    protected List<EmailBean> emailBeans = PersistenceAccess.loadFromPersistenceEmailBean();
-
     //init model
-    private ServerManager serverManager = new ServerManager(emailBeans,this);
+    private ServerManager serverManager = new ServerManager(PersistenceAccess.loadFromPersistenceEmailBean(),this);
 
     //init view
     private ViewFactory viewFactory = new ViewFactory(serverManager);
@@ -34,12 +30,13 @@ public class Launcher extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         viewFactory.showMainWindow();
+        serverManager.listenerServiceThread.start();
     }
 
     @Override
     public void stop() throws Exception {
         /* Salvataggio sul file di persistenza */
-        PersistenceAccess.saveEmailBeanToPersistence(emailBeans);
+        PersistenceAccess.saveEmailBeanToPersistence(serverManager.emailBeans);
 
         serverManager.stopListenerServiceThread();
         serverManager.stopThreadPool();

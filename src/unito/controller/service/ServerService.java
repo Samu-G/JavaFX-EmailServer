@@ -95,7 +95,7 @@ public class ServerService implements Runnable {
 
     private void invioEmail() {
 
-        EmailBean emailBean = ServerManager.getEmailBean(TryToConnect);
+        EmailBean emailBean = serverManager.getEmailBean(TryToConnect);
         List<ValidEmail> emailList = new ArrayList<>();
 
         try {
@@ -115,13 +115,13 @@ public class ServerService implements Runnable {
 
     private void handShaking() {
 
-        EmailBean emailBean = ServerManager.getEmailBean(TryToConnect);
+        EmailBean emailBean = serverManager.getEmailBean(TryToConnect);
         List<ValidEmail> emailList = new ArrayList<>();
 
         try {
             if(emailBean != null) {
                 outStream.writeObject(emailBean.getEmailList());
-                emailBean.setReadedAllMessage();
+                //emailBean.setReadedAllMessage();
             } else {
                 outStream.writeObject(ClientRequestResult.ERROR);
             }

@@ -21,13 +21,7 @@ public class MainWindowController extends BaseController implements Initializabl
     @FXML
     private TextArea console;
 
-    @FXML
-    private Button startButton;
-
-    @FXML
-    private Button stopButton;
-
-    @FXML
+   @FXML
     private Button getConnectedClientButton;
 
     public static TextArea staticTxtArea;
@@ -39,22 +33,6 @@ public class MainWindowController extends BaseController implements Initializabl
      */
     public MainWindowController(ServerManager serverManager, ViewFactory viewFactory, String fxmlName) {
         super(serverManager, viewFactory, fxmlName);
-    }
-
-    @FXML
-    void startServerAction(ActionEvent event) {
-        serverManager.writeOnConsole("SERVER IS STARTING...");
-        serverManager.listenerServiceThread.start();
-    }
-
-    @FXML
-    void stopServerAction(ActionEvent event) {
-        try {
-            serverManager.stopListenerServiceThread();
-        } catch (Exception e) {
-            serverManager.writeOnConsole("ERROR: CAN'T SHOUTDOWN THE SERVER");
-            e.printStackTrace();
-        }
     }
 
     public void printOnConsole(String str) {

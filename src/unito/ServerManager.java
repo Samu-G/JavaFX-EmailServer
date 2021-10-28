@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 
 public class ServerManager {
 
-    public static List<EmailBean> emailBeans;
+    public List<EmailBean> emailBeans;
     public static MainWindowController mainWindowController;
     public ListenerService listenerService;
     public Thread listenerServiceThread;
@@ -34,7 +34,7 @@ public class ServerManager {
      * @param address indirizzo email dell'account
      * @return la liste di email quell'account (tutte quante)
      */
-    public static List<ValidEmail> getEmailsList(String address) {
+    public List<ValidEmail> getEmailsList(String address) {
         for (EmailBean i : emailBeans) {
             if (i.getEmailAccountAssociated().getAddress().equals(address)) {
                 return i.getEmailList();
@@ -50,7 +50,7 @@ public class ServerManager {
      * @param address indirizzo email dell'account
      * @return la liste di email non ancora inviate al client di quell'account
      */
-    public static List<ValidEmail> getUnsendedEmailsList(String address) {
+    public List<ValidEmail> getUnsendedEmailsList(String address) {
         for (EmailBean i : emailBeans) {
             if (i.getEmailAccountAssociated().getAddress().equals(address)) {
                 return i.getEmailListAlreadyToSend();
@@ -63,7 +63,7 @@ public class ServerManager {
     /**
      * @return La lista di ValidAccount presenti sul server
      */
-    public static List<ValidAccount> getValidAccountList() {
+    public List<ValidAccount> getValidAccountList() {
         List<ValidAccount> result = new ArrayList<ValidAccount>();
         for (EmailBean i : emailBeans) {
             result.add(i.getEmailAccountAssociated());
@@ -75,7 +75,7 @@ public class ServerManager {
      * @param account Il ValidAccount associato a quel EmailBean
      * @return il suo EmailBean
      */
-    public static EmailBean getEmailBean(ValidAccount account) {
+    public EmailBean getEmailBean(ValidAccount account) {
         for (EmailBean e : emailBeans) {
             if (e.equals(account)) {
                 return e;
@@ -88,7 +88,7 @@ public class ServerManager {
      * @param toAutenticate il ValidAccount da autenticare
      * @return true se trova l'account e le credenziali corrette, false altrimenti
      */
-    public static boolean authenticateThisAccount(ValidAccount toAutenticate) {
+    public boolean authenticateThisAccount(ValidAccount toAutenticate) {
         for (EmailBean i : emailBeans) {
             if (i.getEmailAccountAssociated().equals(toAutenticate)) {
                 return true;

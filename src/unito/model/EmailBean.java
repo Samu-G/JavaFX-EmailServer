@@ -14,7 +14,7 @@ public class EmailBean implements Serializable {
         this.emailAccountAssociated = emailAccountAssociated;
         this.emailList = emailsListAssociated;
         this.emailListAlreadyToSend = this.emailList;
-        emailListSended = null;
+        this.emailListSended = new ArrayList<>();
     }
 
     public ValidAccount getEmailAccountAssociated() {
@@ -31,9 +31,6 @@ public class EmailBean implements Serializable {
 
     public static void printBean(EmailBean bean) {
         System.out.println(bean.toString());
-        for (ValidEmail email : bean.getEmailList()) {
-            System.out.println(email.toString());
-        }
     }
 
     public void addEmail(ValidEmail email) {

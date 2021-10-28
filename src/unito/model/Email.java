@@ -52,7 +52,6 @@ public class Email implements Serializable {
         this.textMessage = new SimpleStringProperty(textMessage);
         this.size = new SimpleStringProperty("0");
         this.isRead = false;
-        System.out.println(this.toString());
     }
 
     public String getSender() {

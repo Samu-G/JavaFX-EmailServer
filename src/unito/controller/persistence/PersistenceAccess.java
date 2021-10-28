@@ -9,10 +9,7 @@ import java.util.List;
 
 public class PersistenceAccess {
 
-
-    //private final String VALID_ACCOUNTS_LOCATION = ".validAccounts.ser";
-    //private final String VALID_EMAIL_LOCATION = ".email.ser";
-    private static final String VALID_EMAIL_BEANS_LOCATION = ".emailbean.ser";
+    private static final String VALID_EMAIL_BEANS_LOCATION = "src/unito/controller/persistence/emailBean.ser";
     private static Encoder encoder = new Encoder();
 
     public static List<EmailBean> loadFromPersistenceEmailBean() {
@@ -45,7 +42,7 @@ public class PersistenceAccess {
 
     public static List<ValidEmail> exampleEmailList() {
         List<ValidEmail> emailList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             emailList.add(new ValidEmail("sender" + i, "recipients" + i, "subject" + i, "size" + i, "date" + i, "textMessage" + i));
         }
         return emailList;
