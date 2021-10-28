@@ -1,8 +1,9 @@
 package unito.controller.service;
 
 import unito.ServerManager;
-import unito.controller.persistence.*;
 import unito.model.EmailBean;
+import unito.model.ValidAccount;
+import unito.model.ValidEmail;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -71,22 +72,22 @@ public class ServerService implements Runnable {
     }
 
     private void riceviEmail() {
-        List<ValidEmail> validEmailRecived = new ArrayList<>();
+        List<ValidEmail> validEmailRecived;
+
         try {
             validEmailRecived = (List<ValidEmail>) inStream.readObject();
 
             if (validEmailRecived != null) {
-
                 /* Aggiorno i bean dei destinatari */
                 for (EmailBean toCheck : serverManager.emailBeans) {
                     for (ValidEmail v : validEmailRecived) {
-                        if (toCheck.getEmailAccountAssociated().getAddress() == v.getRecipients()) {
+                        if (toCheck.getEmailAccountAssociated().getAddress().equals(v.getRecipients())) {
                             toCheck.addEmail(v);
                         }
                     }
                 }
-
             }
+
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -94,36 +95,41 @@ public class ServerService implements Runnable {
 
     private void invioEmail() {
 
+        EmailBean emailBean = ServerManager.getEmailBean(TryToConnect);
+        List<ValidEmail> emailList = new ArrayList<>();
+
         try {
-            for (EmailBean toCheck : serverManager.emailBeans) {
-                if (toCheck.getEmailAccountAssociated().getAddress() == TryToConnect.getAddress()) {
-                    outStream.writeObject(
-                            toCheck.getNewEmail()
-                    );
-                    toCheck.setReadedAllMessage();
-                    break;
-                }
+            if(emailBean != null) {
+                emailList = emailBean.getEmailListAlreadyToSend();
+                outStream.writeObject(emailList);
+                emailBean.setReadedAllMessage();
+            } else {
+                outStream.writeObject(ClientRequestResult.ERROR);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        serverManager.writeOnConsole("InvioNuoveEmail completed with the client " + TryToConnect.getAddress() + ", " + "sended " + emailList.size());
     }
 
     private void handShaking() {
-        System.out.println("# ServerService -> " + TryToConnect.getAddress() + "Client authenticated. #");
-        List<ValidEmail> emailList = ServerManager.getEmailsList(TryToConnect.getAddress());
-        System.out.println("# ServerService -> " + TryToConnect.getAddress() + " have: " + emailList.size() + " email. #");
 
-        /* Scrivo sull'outStream la lista di email email */
+        EmailBean emailBean = ServerManager.getEmailBean(TryToConnect);
+        List<ValidEmail> emailList = new ArrayList<>();
+
         try {
-            this.outStream.writeObject(emailList);
+            if(emailBean != null) {
+                outStream.writeObject(emailBean.getEmailList());
+                emailBean.setReadedAllMessage();
+            } else {
+                outStream.writeObject(ClientRequestResult.ERROR);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        /**/
 
-        System.out.println("# ServerService -> " + TryToConnect.getAddress() + "Client NOT authenticated. REJECTED #");
+        serverManager.writeOnConsole("Handshaking completed with the client " + TryToConnect.getAddress() + ", " + "sended " + emailList.size());
     }
 
     private boolean requestIdentification() {

@@ -1,63 +1,68 @@
 package unito.model;
 
-import unito.controller.persistence.ValidAccount;
-import unito.controller.persistence.ValidEmail;
-
 import java.io.Serializable;
 import java.util.*;
 
 public class EmailBean implements Serializable {
 
-
     private ValidAccount emailAccountAssociated;
+    private List<ValidEmail> emailList;
     private List<ValidEmail> emailListSended;
     private List<ValidEmail> emailListAlreadyToSend;
 
     public EmailBean(ValidAccount emailAccountAssociated, List<ValidEmail> emailsListAssociated) {
         this.emailAccountAssociated = emailAccountAssociated;
-        this.emailListSended = emailsListAssociated;
+        this.emailList = emailsListAssociated;
+        this.emailListAlreadyToSend = this.emailList;
+        emailListSended = null;
     }
 
     public ValidAccount getEmailAccountAssociated() {
         return emailAccountAssociated;
     }
 
-    public List<ValidEmail> getEmailListSended() {
-        return emailListSended;
+    public List<ValidEmail> getEmailList() {
+        return emailList;
     }
 
-    public boolean equals(ValidAccount obj) {
-        return Objects.equals(obj.getPassword(), this.emailAccountAssociated.getPassword()) &&
-                Objects.equals(obj.getAddress(), this.emailAccountAssociated.getAddress());
+    public List<ValidEmail> getEmailListAlreadyToSend() {
+        return emailListAlreadyToSend;
     }
 
     public static void printBean(EmailBean bean) {
         System.out.println(bean.toString());
-        for (ValidEmail email : bean.getEmailListSended()) {
+        for (ValidEmail email : bean.getEmailList()) {
             System.out.println(email.toString());
         }
     }
 
     public void addEmail(ValidEmail email) {
         if (email != null) {
+            emailList.add(email);
             emailListAlreadyToSend.add(email);
         }
-    }
-
-    public List<ValidEmail> getNewEmail() {
-        return emailListAlreadyToSend;
     }
 
     public void setReadedAllMessage() {
         for(ValidEmail email : emailListAlreadyToSend) {
             emailListSended.add(email);
         }
-
         emailListAlreadyToSend.clear();
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof ValidAccount) {
+            return Objects.equals( ((ValidAccount)obj).getPassword(), this.emailAccountAssociated.getPassword()) &&
+                    Objects.equals(((ValidAccount)obj).getAddress(), this.emailAccountAssociated.getAddress());
+        } else {
+            return false;
+        }
     }
 
     @Override
     public String toString() {
-        return "Questo è il Bean di " + getEmailAccountAssociated().getAddress() + ", e contiene " + getEmailListSended().size() + " Email.";
+        return "Questo è il Bean di " + getEmailAccountAssociated().getAddress() + ", e contiene " + getEmailList().size() + " Email.";
     }
 }

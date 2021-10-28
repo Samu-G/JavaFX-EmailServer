@@ -15,42 +15,34 @@ import java.util.concurrent.Executors;
 
 public class Launcher extends Application {
 
-    private static final int NUM_OF_THREAD = 4;
+    public static final int NUM_OF_THREAD = 4;
 
+    //load from persistence
     //loading from persistence all email Beans
-    private PersistenceAccess persistenceAccess = new PersistenceAccess();
-    //protected List<EmailBean> emailBeans = persistenceAccess.loadFromPersistenceEmailBean();
-    protected List<EmailBean> emailBeans = PersistenceAccess.exampleEmailBean();
-
-    //init ThreadPool
-    private ExecutorService serverThreadPool = Executors.newFixedThreadPool(NUM_OF_THREAD);
+    protected List<EmailBean> emailBeans = PersistenceAccess.loadFromPersistenceEmailBean();
 
     //init model
-    private ServerManager serverManager = new ServerManager(emailBeans, serverThreadPool, this);
+    private ServerManager serverManager = new ServerManager(emailBeans,this);
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        //init view
-        ViewFactory viewFactory = new ViewFactory(serverManager);
-        viewFactory.showMainWindow();
-
-    }
+    //init view
+    private ViewFactory viewFactory = new ViewFactory(serverManager);
 
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
+    public void start(Stage primaryStage) throws Exception {
+        viewFactory.showMainWindow();
+    }
+
+    @Override
     public void stop() throws Exception {
-        //Salvataggio del file di persistenza
-        persistenceAccess.saveEmailBeanToPersistence(emailBeans);
-        //stop listenerService
-        serverManager.listenerService.closeServerSocket();
-        //stop ThreadPool
-        while (!serverThreadPool.isTerminated()) {
-            serverThreadPool.shutdown();
-        }
-        System.exit(0);
+        /* Salvataggio sul file di persistenza */
+        PersistenceAccess.saveEmailBeanToPersistence(emailBeans);
+
+        serverManager.stopListenerServiceThread();
+        serverManager.stopThreadPool();
     }
 
     static void setUpPipeOutput(PipedInputStream pipeIn1, PipedInputStream pipeIn2) {
