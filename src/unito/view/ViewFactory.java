@@ -33,7 +33,7 @@ public class ViewFactory {
         System.out.println("initializing controller for the main window...");
         MainWindowController controller = new MainWindowController(serverManager, this, "MainWindow.fxml");
         serverManager.setMainWindowController(controller);
-        initializeView(controller, "Client");
+        initializeView(controller, "Server");
     }
 
 
