@@ -43,7 +43,7 @@ public class PersistenceAccess {
     public static List<ValidEmail> exampleEmailList() {
         List<ValidEmail> emailList = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            emailList.add(new ValidEmail("sender" + i, "recipients" + i, "subject" + i, "size" + i, "date" + i, "textMessage" + i));
+            emailList.add(new ValidEmail("sender" + i, new String[]{"recipients" + i, "recipients" + (i+1)} , "subject" + i, "size" + i, "date" + i, "textMessage" + i));
         }
         return emailList;
     }

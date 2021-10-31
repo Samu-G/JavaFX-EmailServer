@@ -25,7 +25,7 @@ public class ValidEmail implements Serializable {
 
     private String sender;
 
-    private String recipients; //destinatari
+    private String [] recipients; //destinatari
 
     private String subject; //oggetto
 
@@ -35,7 +35,7 @@ public class ValidEmail implements Serializable {
 
     private String textMessage; //testo del messaggio
 
-    public ValidEmail(String sender, String recipients, String subject, String size, String date, String textMessage) {
+    public ValidEmail(String sender, String [] recipients, String subject, String size, String date, String textMessage) {
         this.sender = sender;
         this.recipients = recipients;
         this.subject = subject;
@@ -59,7 +59,7 @@ public class ValidEmail implements Serializable {
         return sender;
     }
 
-    public String getRecipients() {
+    public String [] getRecipients() {
         return recipients;
     }
 

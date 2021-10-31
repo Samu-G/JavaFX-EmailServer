@@ -41,25 +41,4 @@ public class Launcher extends Application {
         serverManager.stopListenerServiceThread();
         serverManager.stopThreadPool();
     }
-
-    static void setUpPipeOutput(PipedInputStream pipeIn1, PipedInputStream pipeIn2) {
-        try {
-            PipedOutputStream pout = new PipedOutputStream(pipeIn1);
-            System.setOut(new PrintStream(pout, true));
-        } catch (IOException | SecurityException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            PipedOutputStream pout2 = new PipedOutputStream(pipeIn2);
-            System.setErr(new PrintStream(pout2, true));
-        } catch (IOException | SecurityException e) {
-            e.printStackTrace();
-        }
-
-        //ReaderThread obj = new ReaderThread(pipeIn, pipeIn2, errorThrower, reader, reader2, quit, txtArea);
-
-    }
-
-
 }
