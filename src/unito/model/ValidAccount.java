@@ -16,10 +16,6 @@ public class ValidAccount implements Serializable {
         return address;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public String getPassword() {
         return password;
     }
@@ -38,10 +34,6 @@ public class ValidAccount implements Serializable {
             System.out.println("classe non corretta");
             return false;
         } else {
-            /*
-            System.out.println("confronto " + this.getAddress() + " con " + ((ValidAccount) obj).getAddress());
-            System.out.println("confronto " + this.getPassword() + " con " + ((ValidAccount) obj).getPassword());
-            */
             if (this.address.equals(((ValidAccount) obj).getAddress())
                     && this.password.equals(((ValidAccount) obj).getPassword())) {
                 return true;

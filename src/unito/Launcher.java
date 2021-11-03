@@ -2,26 +2,18 @@ package unito;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import unito.model.EmailBean;
 import unito.controller.persistence.PersistenceAccess;
 import unito.view.ViewFactory;
-import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.io.PrintStream;
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class Launcher extends Application {
 
     public static final int NUM_OF_THREAD = 4;
 
     //init model
-    private ServerManager serverManager = new ServerManager(PersistenceAccess.loadFromPersistenceEmailBean(),this);
+    private final ServerManager serverManager = new ServerManager(PersistenceAccess.loadFromPersistenceEmailBean());
 
     //init view
-    private ViewFactory viewFactory = new ViewFactory(serverManager);
+    private final ViewFactory viewFactory = new ViewFactory(serverManager);
 
     public static void main(String[] args) {
         launch(args);
@@ -35,10 +27,9 @@ public class Launcher extends Application {
 
     @Override
     public void stop() throws Exception {
-        /* Salvataggio sul file di persistenza */
         PersistenceAccess.saveEmailBeanToPersistence(serverManager.emailBeans);
-
         serverManager.stopListenerServiceThread();
         serverManager.stopThreadPool();
+        System.exit(0);
     }
 }

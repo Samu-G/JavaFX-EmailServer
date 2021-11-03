@@ -17,17 +17,15 @@ public class ServerManager {
     public static MainWindowController mainWindowController;
     public ListenerService listenerService;
     public Thread listenerServiceThread;
-    public Launcher launcher;
 
     //init ThreadPool
     private ExecutorService serverThreadPool;
 
-    public ServerManager(List<EmailBean> emailBeans, Launcher launcher) {
+    public ServerManager(List<EmailBean> emailBeans) {
         this.emailBeans = emailBeans;
         this.serverThreadPool = Executors.newFixedThreadPool(Launcher.NUM_OF_THREAD);
         this.listenerService = new ListenerService(serverThreadPool, this);
         this.listenerServiceThread = new Thread(listenerService);
-        this.launcher = launcher;
     }
 
     /**

@@ -7,8 +7,8 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="402.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TextArea fx:id="console" editable="false" layoutX="14.0" layoutY="33.0" prefHeight="365.0" prefWidth="590.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
-      <Text fontSmoothingType="LCD" layoutX="5.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Server output:" AnchorPane.leftAnchor="5.0">
+      <TextArea fx:id="console" editable="false" layoutX="14.0" layoutY="33.0" prefHeight="365.0" prefWidth="590.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0" />
+      <Text fontSmoothingType="LCD" layoutX="6.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Server output:" AnchorPane.leftAnchor="6.0">
          <font>
             <Font name="System Bold Italic" size="12.0" />
          </font>

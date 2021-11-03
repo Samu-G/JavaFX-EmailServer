@@ -4,8 +4,11 @@ package unito.controller.persistence;
 import unito.model.*;
 
 import java.io.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 public class PersistenceAccess {
 
@@ -16,9 +19,11 @@ public class PersistenceAccess {
 
         List<EmailBean> resultList = new ArrayList<>();
 
+
         resultList.add(new EmailBean(new ValidAccount("user1@email.com", "user1"), exampleEmailList()));
         resultList.add(new EmailBean(new ValidAccount("user2@email.com", "user2"), exampleEmailList()));
         resultList.add(new EmailBean(new ValidAccount("user3@email.com", "user3"), exampleEmailList()));
+
 
         /* Carico da File di persistenza gli emailBean */
         try {
@@ -42,9 +47,11 @@ public class PersistenceAccess {
 
     public static List<ValidEmail> exampleEmailList() {
         List<ValidEmail> emailList = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            emailList.add(new ValidEmail("sender" + i, new String[]{"recipients" + i, "recipients" + (i+1)} , "subject" + i, "size" + i, "date" + i, "textMessage" + i));
-        }
+
+        String [] destinatari = new String [] {"Destinatario1","Destinatario2"};
+
+        emailList.add(new ValidEmail("Mittente", destinatari, "Oggetto", "Dimensione", new Date(), "Testo del messaggio"));
+
         return emailList;
     }
 
