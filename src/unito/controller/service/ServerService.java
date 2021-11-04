@@ -135,7 +135,7 @@ public class ServerService implements Runnable {
 
     private boolean requestIdentification() {
         try {
-            // trovare soluzione al cast
+            // trovare soluzione al cast non va bene se la richiesta è diversa dall'HANDSHAKE
             this.requestType = ((ClientRequestType) inStream.readObject());
 
         } catch (IOException | ClassNotFoundException e) {
