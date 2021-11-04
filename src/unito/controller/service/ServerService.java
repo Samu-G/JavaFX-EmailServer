@@ -54,6 +54,7 @@ public class ServerService implements Runnable {
                         }
                     } else {
                         //non mi sono autenticato
+                        System.out.println("# ServerService -> Authentication failed. ABORTING REQUEST # ");
                     }
                 } else {
                     System.out.println("# ServerService -> ValidAccount received is NULL. ABORTING REQUEST # ");
@@ -64,7 +65,7 @@ public class ServerService implements Runnable {
             } finally {
                 incoming.close();
                 closeStream();
-                serverManager.writeOnConsole("Connection with the client closed");
+                serverManager.writeOnConsole("Connection with the client closed.\n");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -134,7 +135,9 @@ public class ServerService implements Runnable {
 
     private boolean requestIdentification() {
         try {
+            // trovare soluzione al cast
             this.requestType = ((ClientRequestType) inStream.readObject());
+
         } catch (IOException | ClassNotFoundException e) {
             //TODO: da gestire il caso in cui arriva un oggetto che non è un ClientRequestType
             e.printStackTrace();
