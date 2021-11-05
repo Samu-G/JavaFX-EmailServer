@@ -43,16 +43,14 @@ public class ListenerService implements Runnable {
     @Override
     public void run() {
         listener = openServerSocket();
+        serverManager.writeOnConsole("ListenerService is now running -> Listening to " + listener.getLocalPort() + "...");
 
         for (; ; ) {
-            System.out.println("\n# ListenerService is now running.... #");
             Socket incoming = null; //pending for new connection
             try {
-                System.out.println("# ListenerService -> Listening to 8189... #");
                 incoming = listener.accept();
-                System.out.println("# ListenerService -> Connessione in entrata accettata; autenticazione del client presa in carico dal ServerService. #");
 
-                serverManager.writeOnConsole("Connection accepted with the client.\n");
+                serverManager.writeOnConsole("\nConnection accepted with the client.");
 
                 //init dedicated socket service
                 Runnable task = new ServerService(incoming, serverManager);

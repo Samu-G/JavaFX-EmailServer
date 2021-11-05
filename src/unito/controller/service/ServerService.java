@@ -19,7 +19,7 @@ public class ServerService implements Runnable {
     protected ServerManager serverManager;
     private ObjectInputStream inStream;
     private ObjectOutputStream outStream;
-    private ValidAccount TryToConnect;
+    private ValidAccount tryToConnect;
     private ClientRequestType requestType;
     private boolean authenticated;
 
@@ -38,16 +38,16 @@ public class ServerService implements Runnable {
             //aprire gli input e output stream;
             openStream();
             try {
-                this.TryToConnect = ((ValidAccount) inStream.readObject());
-                if (TryToConnect != null) {
+                this.tryToConnect = ((ValidAccount) inStream.readObject());
+                if (tryToConnect != null) {
                     System.out.println("# ServerService -> ValidAccount to authenticate received. Waiting for authentication... # ");
                     /* Autenticazione del Client... */
                     if (authenticateClient()) {
                         if (requestIdentification()) {
                             switch (requestType) {
                                 case HANDSHAKING -> handShaking();
-                                case INVIOMESSAGGIO -> invioEmail();
-                                case RICEVIMESSAGGIO -> riceviEmail();
+                                case INVIOMESSAGGIO -> riceviEmail();
+                                case RICEVIMESSAGGIO -> invioEmail();
                             }
                         } else {
                             System.out.println("# ServerService -> ClientRequestType IS INVALID. ABORTING REQUEST # ");
@@ -73,22 +73,32 @@ public class ServerService implements Runnable {
     }
 
     private void riceviEmail() {
-        List<ValidEmail> validEmailRecived;
+        ValidEmail validEmailRecived;
 
         try {
-            validEmailRecived = (List<ValidEmail>) inStream.readObject();
+            validEmailRecived = (ValidEmail) inStream.readObject();
 
             if (validEmailRecived != null) {
-                /* Aggiorno i bean dei destinatari */
+
+                //System.out.println("I destinatari del messaggio sono n=" + validEmailRecived.getRecipients().length);
+
                 for (EmailBean toCheck : serverManager.emailBeans) {
-                    for (ValidEmail v : validEmailRecived) {
-                        if (toCheck.getEmailAccountAssociated().getAddress().equals(v.getRecipients())) {
-                            toCheck.addEmail(v);
+
+                    for (String r : validEmailRecived.getRecipients()) {
+                        if (toCheck.getEmailAccountAssociated().getAddress().equals(r)) {
+                            System.out.println("\nPRIMA: " + toCheck);
+                            toCheck.addEmail(validEmailRecived);
+                            System.out.println("Ho aggiunto una mail al bean " + toCheck.getEmailAccountAssociated().getAddress());
+                            System.out.println("\nDOPO: " + toCheck);
                         }
                     }
-                }
-            }
 
+                }
+                serverManager.writeOnConsole("RiceviEmail completed with the client " + tryToConnect.getAddress());
+            } else {
+                //ho ricevuto una mail nulla, non faccio niente
+                serverManager.writeOnConsole("RiceviEmail FAILED with the client " + tryToConnect.getAddress());
+            }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -96,53 +106,54 @@ public class ServerService implements Runnable {
 
     private void invioEmail() {
 
-        EmailBean emailBean = serverManager.getEmailBean(TryToConnect);
+        EmailBean emailBean = serverManager.getEmailBean(tryToConnect);
         List<ValidEmail> emailList = new ArrayList<>();
 
         try {
-            if(emailBean != null) {
+            if (emailBean != null) {
                 emailList = emailBean.getEmailListAlreadyToSend();
                 outStream.writeObject(emailList);
                 emailBean.setReadedAllMessage();
+                serverManager.writeOnConsole("InvioEmail completed with the client " + tryToConnect.getAddress() + ", " + "sended " + emailList.size());
             } else {
                 outStream.writeObject(ClientRequestResult.ERROR);
+                serverManager.writeOnConsole("InvioEmail completed with the client " + tryToConnect.getAddress() + ", " + "sended " + emailList.size());
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        serverManager.writeOnConsole("InvioNuoveEmail completed with the client " + TryToConnect.getAddress() + ", " + "sended " + emailList.size());
     }
 
     private void handShaking() {
 
-        EmailBean emailBean = serverManager.getEmailBean(TryToConnect);
-        List<ValidEmail> emailList = new ArrayList<>();
-
+        EmailBean emailBean = serverManager.getEmailBean(tryToConnect);
+        System.out.println(emailBean);
         try {
-            if(emailBean != null) {
+            if (emailBean != null) {
+                System.out.println("HANDSHAKING il bean contiene: " + emailBean.getEmailList().size());
                 outStream.writeObject(emailBean.getEmailList());
                 //emailBean.setReadedAllMessage();
+                serverManager.writeOnConsole("Handshaking completed with the client " + tryToConnect.getAddress() + ", " + "sended " + emailBean.getEmailList().size());
             } else {
                 outStream.writeObject(ClientRequestResult.ERROR);
+                serverManager.writeOnConsole("Handshaking FAILED with the client " + tryToConnect.getAddress());
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        serverManager.writeOnConsole("Handshaking completed with the client " + TryToConnect.getAddress() + ", " + "sended " + emailList.size());
     }
 
     private boolean requestIdentification() {
         try {
-            // trovare soluzione al cast non va bene se la richiesta è diversa dall'HANDSHAKE
             this.requestType = ((ClientRequestType) inStream.readObject());
 
         } catch (IOException | ClassNotFoundException e) {
-            //TODO: da gestire il caso in cui arriva un oggetto che non è un ClientRequestType
             e.printStackTrace();
             return false;
         }
+        serverManager.writeOnConsole("Kind of request needed for " + tryToConnect.getAddress() + " is " + this.requestType);
         return true;
     }
 
@@ -165,14 +176,14 @@ public class ServerService implements Runnable {
     }
 
     private boolean authenticateClient() {
-        if (TryToConnect != null) {
-            System.out.println("# ServerService -> Trying to connect:\n# ServerService -> address: " + TryToConnect.getAddress() + "\n# ServerService -> password: " + TryToConnect.getPassword());
+        if (tryToConnect != null) {
+            System.out.println("# ServerService -> Trying to connect:\n# ServerService -> address: " + tryToConnect.getAddress() + "\n# ServerService -> password: " + tryToConnect.getPassword());
         } else {
             System.out.println("ValidAccount TryToConnect is null");
             return false;
         }
 
-        if (serverManager.authenticateThisAccount(TryToConnect)) {
+        if (serverManager.authenticateThisAccount(tryToConnect)) {
             try {
                 this.outStream.writeObject(ClientRequestResult.SUCCESS);
                 System.out.println("risultato spedito");
