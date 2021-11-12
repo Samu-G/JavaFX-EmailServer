@@ -80,7 +80,7 @@ public class PersistenceAccess {
     }
 
     /**
-     * Salva nel file di persistenza gliEmailBean dei client al momento della chiusura
+     * Salva nel file di persistenza gli EmailBean dei client al momento della chiusura
      *
      * @param emailBeans la lista di EmailBean da salvare nel file di pesistenza
      */

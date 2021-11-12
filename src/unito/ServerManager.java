@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 
 public class ServerManager {
 
+    //TODO(MB): Perché chiamarli emailBeans? Sono strettamente collegati ai Beans?
     public List<EmailBean> emailBeans;
     public static MainWindowController mainWindowController;
     public ListenerService listenerService;

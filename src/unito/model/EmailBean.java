@@ -42,6 +42,7 @@ public class EmailBean implements Serializable {
 
     public void setReadedAllMessage() {
         for(ValidEmail email : emailListAlreadyToSend) {
+            //TODO(MB): Cosa sta facendo esattamente questo metodo? Perchè è chiamato "Sended"? Stessa cosa per "AlreadyToSend"
             emailListSended.add(email);
         }
         emailListAlreadyToSend.clear();
