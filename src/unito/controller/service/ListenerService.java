@@ -50,7 +50,7 @@ public class ListenerService implements Runnable {
             try {
                 incoming = listener.accept();
 
-                serverManager.writeOnConsole("\nConnection accepted with the client.");
+                serverManager.writeOnConsole("LOG: Connection accepted with the client.");
 
                 //init dedicated socket service
                 Runnable task = new ServerService(incoming, serverManager);
