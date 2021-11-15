@@ -123,10 +123,10 @@ public class ServerService implements Runnable {
 
         try {
             if (emailBean != null) {
-                emailList = emailBean.getEmailListAlreadyToSend();
+                emailList = emailBean.getEmailListToSend();
                 outStream.writeObject(emailList);
-                emailBean.setReadedAllMessage();
                 serverManager.writeOnConsole("InvioEmail completed with the client " + tryToConnect.getAddress() + ", " + "sended " + emailList.size());
+                emailBean.setEmptyListToSend();
             } else {
                 outStream.writeObject(ClientRequestResult.ERROR);
                 serverManager.writeOnConsole("InvioEmail completed with the client " + tryToConnect.getAddress() + ", " + "sended " + emailList.size());
@@ -145,8 +145,7 @@ public class ServerService implements Runnable {
             if (emailBean != null) {
                 System.out.println("HANDSHAKING il bean contiene: " + emailBean.getEmailList().size());
                 outStream.writeObject(emailBean.getEmailList());
-                //emailBean.setReadedAllMessage();
-                serverManager.writeOnConsole("Handshaking completed with the client " + tryToConnect.getAddress() + ", " + "sended " + emailBean.getEmailList().size());
+                serverManager.writeOnConsole("LOG: Handshaking completed with the client " + tryToConnect.getAddress() + ", " + "sended " + emailBean.getEmailList().size() + " email.");
             } else {
                 outStream.writeObject(ClientRequestResult.ERROR);
                 serverManager.writeOnConsole("Handshaking FAILED with the client " + tryToConnect.getAddress());
@@ -161,26 +160,29 @@ public class ServerService implements Runnable {
         ValidEmail validEmailRecived;
 
         try {
+
             validEmailRecived = (ValidEmail) inStream.readObject();
 
-            for (ValidEmail email : serverManager.getEmailBean(tryToConnect).getEmailList()) {
+            if (validEmailRecived != null) {
+                for (ValidEmail email : serverManager.getEmailBean(tryToConnect).getEmailList()) {
 
-                if (email.equals(validEmailRecived)) {
-                    boolean res = serverManager.getEmailBean(tryToConnect).getEmailList().remove(email);
-                    outStream.writeObject(res);
-                    serverManager.writeOnConsole("LOG: CancellaEmail completed with the client " + tryToConnect.getAddress());
-                    break;
+                    if (email.equals(validEmailRecived)) {
+                        boolean res = serverManager.getEmailBean(tryToConnect).getEmailList().remove(email);
+                        outStream.writeObject(res);
+                        serverManager.writeOnConsole("LOG: CancellaEmail completed with the client " + tryToConnect.getAddress());
+                        break;
+                    }
                 }
-
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-}
+    }
+
 
     private boolean requestIdentification() {
         try {
-            this.requestType = ((ClientRequestType) inStream.readObject());
+            this.requestType = (ClientRequestType) inStream.readObject();
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

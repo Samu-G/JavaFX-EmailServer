@@ -21,6 +21,7 @@ public class Launcher extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        serverManager.setViewFactory(viewFactory);
         viewFactory.showMainWindow();
         serverManager.listenerServiceThread.start();
     }

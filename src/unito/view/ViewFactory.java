@@ -32,7 +32,6 @@ public class ViewFactory {
     public void showMainWindow(){
         System.out.println("showMainWindow() called.");
         mainWindowController = new MainWindowController(serverManager, this, "MainWindow.fxml");
-        serverManager.setMainWindowController(mainWindowController);
         initializeView(mainWindowController, "Server");
     }
 

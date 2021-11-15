@@ -5,6 +5,7 @@ import unito.controller.service.ListenerService;
 import unito.model.EmailBean;
 import unito.model.ValidAccount;
 import unito.model.ValidEmail;
+import unito.view.ViewFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,13 +14,15 @@ import java.util.concurrent.Executors;
 
 public class ServerManager {
 
+    /* Model */
     public List<EmailBean> emailBeans;
     public static MainWindowController mainWindowController;
     public ListenerService listenerService;
+    /* View */
+    private ViewFactory viewFactory;
+    /* Thread */
     public Thread listenerServiceThread;
-
-    //init ThreadPool
-    private ExecutorService serverThreadPool;
+    private final ExecutorService serverThreadPool;
 
     public ServerManager(List<EmailBean> emailBeans) {
         this.emailBeans = emailBeans;
@@ -48,6 +51,7 @@ public class ServerManager {
      * @param address indirizzo email dell'account
      * @return la liste di email non ancora inviate al client di quell'account
      */
+    /*
     public List<ValidEmail> getUnsendedEmailsList(String address) {
         for (EmailBean i : emailBeans) {
             if (i.getEmailAccountAssociated().getAddress().equals(address)) {
@@ -57,6 +61,7 @@ public class ServerManager {
         return null;
 
     }
+    */
 
     /**
      * @return La lista di ValidAccount presenti sul server
@@ -83,28 +88,25 @@ public class ServerManager {
     }
 
     /**
-     * @param toAutenticate il ValidAccount da autenticare
+     * @param toAuthenticate il ValidAccount da autenticare
      * @return true se trova l'account e le credenziali corrette, false altrimenti
      */
-    public boolean authenticateThisAccount(ValidAccount toAutenticate) {
+    public boolean authenticateThisAccount(ValidAccount toAuthenticate) {
         for (EmailBean i : emailBeans) {
-            if (i.getEmailAccountAssociated().equals(toAutenticate)) {
+            if (i.getEmailAccountAssociated().equals(toAuthenticate)) {
                 return true;
             }
         }
         return false;
     }
 
-    public void setMainWindowController(MainWindowController controller) {
-        this.mainWindowController = controller;
-    }
-
     /**
      * Scrive sulla console grafica del server il paramentro passato a string
+     *
      * @param string La stringa da scrivere sulla console
      */
     public void writeOnConsole(String string) {
-        this.mainWindowController.printOnConsole(string);
+        viewFactory.mainWindowController.printOnConsole(string);
     }
 
     /**
@@ -124,9 +126,12 @@ public class ServerManager {
      * Termina il pool di Thread che gestisce le richieste dei client
      */
     public void stopThreadPool() {
-        while(!serverThreadPool.isTerminated()) {
+        while (!serverThreadPool.isTerminated()) {
             serverThreadPool.shutdown();
         }
     }
 
+    public void setViewFactory(ViewFactory viewFactory) {
+        this.viewFactory = viewFactory;
+    }
 }

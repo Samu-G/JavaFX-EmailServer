@@ -82,6 +82,23 @@ public class Email {
         return this.recipients.get();
     }
 
+    public SimpleStringProperty getSenderProperty() {
+        return this.sender;
+    }
+
+    public SimpleStringProperty getrecipientsProperty() {
+        return this.recipients;
+    }
+
+    public SimpleStringProperty getSubjectProperty() {
+        return this.subject;
+    }
+
+    public SimpleStringProperty getTextMessageProperty() {
+        return this.textMessage;
+    }
+
+
     public String getSubject() {
         return subject.get();
     }
