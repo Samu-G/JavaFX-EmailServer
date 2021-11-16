@@ -20,8 +20,8 @@ import java.util.concurrent.ExecutorService;
 public class ListenerService implements Runnable {
 
     private ServerSocket listener;
-    private ExecutorService serverThreadPool;
-    private ServerManager serverManager;
+    private final ExecutorService serverThreadPool;
+    private final ServerManager serverManager;
 
     public ListenerService(ExecutorService serverThreadPool, ServerManager serverManager) {
         this.serverThreadPool = serverThreadPool;
@@ -30,53 +30,56 @@ public class ListenerService implements Runnable {
 
     private ServerSocket openServerSocket() {
         System.out.println("openServerSocket() called.");
-        serverManager.writeOnConsole("openServerSocket() called.\n");
+        ServerSocket serverSocket = null;
         try {
-            ServerSocket serverSocket = new ServerSocket(8189);
-            return serverSocket;
+            serverSocket = new ServerSocket(8189);
+            serverManager.writeOnConsole("LOG: Opened ServerSocket on port: " + serverSocket.getLocalPort());
         } catch (IOException e) {
-            System.out.println("Errore nell'apertura del server socket.");
-            return null;
+            serverManager.writeOnConsole("ERROR: Opened ServerSocket failed!");
         }
+        return serverSocket;
     }
 
     @Override
     public void run() {
         listener = openServerSocket();
-        serverManager.writeOnConsole("ListenerService is now running -> Listening to " + listener.getLocalPort() + "...");
 
-        for (; ; ) {
-            Socket incoming = null; //pending for new connection
-            try {
-                incoming = listener.accept();
+        if (listener != null) {
+            serverManager.writeOnConsole("LOG: ListenerService is now running on Port " + listener.getLocalPort());
+            for (; ; ) {
+                Socket incoming = null; //pending for new connection
+                try {
+                    incoming = listener.accept();
 
-                serverManager.writeOnConsole("\nConnection accepted with the client.");
+                    serverManager.writeOnConsole("LOG: Connection accepted with the client." + incoming.getPort());
 
-                //init dedicated socket service
-                Runnable task = new ServerService(incoming, serverManager);
+                    //init dedicated socket service
+                    Runnable task = new ServerService(incoming, serverManager);
 
-                //starting runnable
-                serverThreadPool.execute(task);
+                    //starting runnable
+                    serverThreadPool.execute(task);
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
     public void closeServerSocket() {
-        //closing ServerSocket
         System.out.println("\ncloseServerSocket() called.");
         if (listener != null) {
             if (listener.isClosed()) {
                 try {
                     listener.close();
+                    serverManager.writeOnConsole("LOG: Closed ServerSocket on port: " + listener.getLocalPort());
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         } else {
-            System.out.println("\nSocket already closed.");
+            serverManager.writeOnConsole("ERROR: ServerSocket is null!");
         }
     }
 

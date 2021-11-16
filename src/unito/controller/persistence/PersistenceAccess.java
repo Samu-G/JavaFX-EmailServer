@@ -19,12 +19,6 @@ public class PersistenceAccess {
 
         List<EmailBean> resultList = new ArrayList<>();
 
-
-        resultList.add(new EmailBean(new ValidAccount("user1@email.com", "user1"), exampleEmailList()));
-        resultList.add(new EmailBean(new ValidAccount("user2@email.com", "user2"), exampleEmailList()));
-        resultList.add(new EmailBean(new ValidAccount("user3@email.com", "user3"), exampleEmailList()));
-
-
         /* Carico da File di persistenza gli emailBean */
         try {
             FileInputStream fileInputStream = new FileInputStream(VALID_EMAIL_BEANS_LOCATION);
@@ -37,6 +31,12 @@ public class PersistenceAccess {
             for (int i = 0; i < resultList.size(); i++) {
                 EmailBean.printBean(resultList.get(i));
             }
+        } catch (FileNotFoundException e) {
+            /* * Account salvati nel file di persistenza */
+            System.out.println("File NOT FOUND! Loading demo...");
+            resultList.add(new EmailBean(new ValidAccount("user1@email.com", "user1"), exampleEmailList()));
+            resultList.add(new EmailBean(new ValidAccount("user2@email.com", "user2"), exampleEmailList()));
+            resultList.add(new EmailBean(new ValidAccount("user3@email.com", "user3"), exampleEmailList()));
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -48,7 +48,7 @@ public class PersistenceAccess {
     public static List<ValidEmail> exampleEmailList() {
         List<ValidEmail> emailList = new ArrayList<>();
 
-        String [] destinatari = new String [] {"Destinatario1","Destinatario2"};
+        String[] destinatari = new String[]{"Destinatario1", "Destinatario2"};
 
         emailList.add(new ValidEmail("Mittente", destinatari, "Oggetto", "Dimensione", new Date(), "Testo del messaggio"));
 

@@ -5,16 +5,14 @@ import java.util.*;
 
 public class EmailBean implements Serializable {
 
-    private ValidAccount emailAccountAssociated;
-    private List<ValidEmail> emailList;
-    private List<ValidEmail> emailListSended;
-    private List<ValidEmail> emailListAlreadyToSend;
+    private final ValidAccount emailAccountAssociated;
+    private final List<ValidEmail> emailList;
+    private List<ValidEmail> emailListToSend;
 
     public EmailBean(ValidAccount emailAccountAssociated, List<ValidEmail> emailsListAssociated) {
         this.emailAccountAssociated = emailAccountAssociated;
         this.emailList = emailsListAssociated;
-        this.emailListSended = new ArrayList<>();
-        this.emailListAlreadyToSend = new ArrayList<>();
+        this.emailListToSend = new LinkedList<>();
     }
 
     public ValidAccount getEmailAccountAssociated() {
@@ -25,8 +23,8 @@ public class EmailBean implements Serializable {
         return emailList;
     }
 
-    public List<ValidEmail> getEmailListAlreadyToSend() {
-        return emailListAlreadyToSend;
+    public List<ValidEmail> getEmailListToSend() {
+        return emailListToSend;
     }
 
     public static void printBean(EmailBean bean) {
@@ -35,25 +33,16 @@ public class EmailBean implements Serializable {
 
     public void addEmail(ValidEmail email) {
         if (email != null) {
-            emailList.add(email);
-            //emailListAlreadyToSend.add(email);
+            this.emailList.add(email);
+            this.emailListToSend.add(email);
         }
     }
-
-    public void setReadedAllMessage() {
-        for(ValidEmail email : emailListAlreadyToSend) {
-            //TODO(MB): Cosa sta facendo esattamente questo metodo? Perchè è chiamato "Sended"? Stessa cosa per "AlreadyToSend"
-            emailListSended.add(email);
-        }
-        emailListAlreadyToSend.clear();
-    }
-
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof ValidAccount) {
-            return Objects.equals( ((ValidAccount)obj).getPassword(), this.emailAccountAssociated.getPassword()) &&
-                    Objects.equals(((ValidAccount)obj).getAddress(), this.emailAccountAssociated.getAddress());
+        if (obj instanceof ValidAccount) {
+            return Objects.equals(((ValidAccount) obj).getPassword(), this.emailAccountAssociated.getPassword()) &&
+                    Objects.equals(((ValidAccount) obj).getAddress(), this.emailAccountAssociated.getAddress());
         } else {
             return false;
         }
@@ -62,8 +51,10 @@ public class EmailBean implements Serializable {
     @Override
     public String toString() {
         return "Questo è il Bean di " + getEmailAccountAssociated().getAddress() + "\n" +
-                "emailList size: " + getEmailList().size() + "\n" +
-                "emailListSended size: " + emailListSended.size() + "\n" +
-                "emailListAlreadyToSend size: " + emailListAlreadyToSend.size();
+                "emailList size: " + getEmailList().size() + "\n\n";
+    }
+
+    public void setEmptyListToSend() {
+        this.emailListToSend.clear();
     }
 }

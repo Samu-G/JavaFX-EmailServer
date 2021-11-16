@@ -4,6 +4,7 @@ package unito.controller;
  * Sample Skeleton for 'MainWindow.fxml' Controller Class
  */
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -36,8 +37,14 @@ public class MainWindowController extends BaseController implements Initializabl
     }
 
     public void printOnConsole(String str) {
-        console.appendText("\n");
-        console.appendText(str);
+        //System.out.println(str);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                console.appendText("\n");
+                console.appendText(str);
+            }
+        });
     }
 
     @Override
