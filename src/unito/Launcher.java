@@ -7,6 +7,7 @@ import unito.view.ViewFactory;
 
 public class Launcher extends Application {
 
+    //COMMENTO PROVA PER GIT
     public static final int NUM_OF_THREAD = 4;
 
     //init model
