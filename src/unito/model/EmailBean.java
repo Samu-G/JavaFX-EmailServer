@@ -19,11 +19,11 @@ public class EmailBean implements Serializable {
         return emailAccountAssociated;
     }
 
-    public List<ValidEmail> getEmailList() {
+    synchronized public List<ValidEmail> getEmailList() {
         return emailList;
     }
 
-    public List<ValidEmail> getEmailListToSend() {
+    synchronized public List<ValidEmail> getEmailListToSend() {
         return emailListToSend;
     }
 
@@ -31,7 +31,7 @@ public class EmailBean implements Serializable {
         System.out.println(bean.toString());
     }
 
-    public void addEmail(ValidEmail email) {
+    synchronized public void addEmail(ValidEmail email) {
         if (email != null) {
             this.emailList.add(email);
             this.emailListToSend.add(email);
@@ -51,10 +51,10 @@ public class EmailBean implements Serializable {
     @Override
     public String toString() {
         return "Questo è il Bean di " + getEmailAccountAssociated().getAddress() + "\n" +
-                "emailList size: " + getEmailList().size() + "\n\n";
+                "EmailList size: " + getEmailList().size() + "\n\n";
     }
 
-    public void setEmptyListToSend() {
+    synchronized public void setEmptyListToSend() {
         this.emailListToSend.clear();
     }
 }
