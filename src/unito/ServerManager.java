@@ -116,9 +116,6 @@ public class ServerManager {
         if (!listenerServiceThread.isInterrupted()) {
             listenerService.closeServerSocket();
             listenerServiceThread.interrupt();
-            mainWindowController.printOnConsole("ListenerService interrupted()");
-        } else {
-            mainWindowController.printOnConsole("ListenerService already interrupted.");
         }
     }
 
