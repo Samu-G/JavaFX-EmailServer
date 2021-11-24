@@ -3,6 +3,9 @@ package unito.model;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * Classe EmailBean (serializzabile) volta a gestire un Account e la sua relativa lista di Email
+ */
 public class EmailBean implements Serializable {
 
     private final ValidAccount emailAccountAssociated;

@@ -14,6 +14,9 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Classe Runnable volta a gestire UNA RICHIESTA (che può essere di vario tipo) del Client. Effettua anche l'autenticazione del Client.
+ */
 public class ServerService implements Runnable {
 
     private Socket incoming;

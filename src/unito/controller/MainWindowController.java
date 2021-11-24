@@ -1,9 +1,5 @@
 package unito.controller;
 
-/**
- * Sample Skeleton for 'MainWindow.fxml' Controller Class
- */
-
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

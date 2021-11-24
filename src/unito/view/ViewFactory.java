@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * class, used to manipulate View (initialize the Window, connect the model to the View, ... )
+ * Classe usata per manipolare la view (inizializzare le Window, connettere il controller alla View, ... )
  */
 public class ViewFactory {
 

@@ -10,6 +10,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Classe non generica usata per leggere e scrivere sul file di persistenza gli account salvati nel server al momento dell'appertura / chiusura della applicazione
+ */
 public class PersistenceAccess {
 
     private static final String VALID_EMAIL_BEANS_LOCATION = "src/unito/controller/persistence/emailBean.ser";

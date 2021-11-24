@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Classe che gestisce le funzioni principali dell'applicazione
+ */
 public class ServerManager {
 
     /* Model */
