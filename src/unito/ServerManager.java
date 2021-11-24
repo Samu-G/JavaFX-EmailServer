@@ -106,7 +106,7 @@ public class ServerManager {
     /**
      * Scrive sulla console grafica del server il paramentro passato a string
      *
-     * @param string La stringa da scrivere sulla console
+     * @param string La stringa da scrivere sulla console prova
      */
     public void writeOnConsole(String string) {
         viewFactory.mainWindowController.printOnConsole(string);
