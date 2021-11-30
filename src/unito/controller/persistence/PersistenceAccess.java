@@ -4,11 +4,8 @@ package unito.controller.persistence;
 import unito.model.*;
 
 import java.io.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Classe non generica usata per leggere e scrivere sul file di persistenza gli account salvati nel server al momento dell'appertura / chiusura della applicazione
@@ -16,7 +13,7 @@ import java.util.Random;
 public class PersistenceAccess {
 
     private static final String VALID_EMAIL_BEANS_LOCATION = "src/unito/controller/persistence/emailBean.ser";
-    private static Encoder encoder = new Encoder();
+    private static final Encoder encoder = new Encoder();
 
     public static List<EmailBean> loadFromPersistenceEmailBean() {
 
@@ -31,8 +28,8 @@ public class PersistenceAccess {
             /* Decripto le password di ogni account della lista */
             decodePasswords(resultList);
 
-            for (int i = 0; i < resultList.size(); i++) {
-                EmailBean.printBean(resultList.get(i));
+            for (EmailBean emailBean : resultList) {
+                EmailBean.printBean(emailBean);
             }
         } catch (FileNotFoundException e) {
             /* * Account salvati nel file di persistenza */
@@ -53,7 +50,9 @@ public class PersistenceAccess {
 
         String[] destinatari = new String[]{"Destinatario1", "Destinatario2"};
 
-        emailList.add(new ValidEmail("Mittente", destinatari, "Oggetto", "Dimensione", new Date(), "Testo del messaggio"));
+        Email email = new Email("Mittente", destinatari, "Oggetto", "Testo del messaggio");
+
+        emailList.add(new ValidEmail(email));
 
         return emailList;
     }
@@ -98,7 +97,7 @@ public class PersistenceAccess {
             objectOutputStream.close();
             fileOutputStream.close();
         } catch (Exception e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         }
         System.out.print("DONE!");
     }

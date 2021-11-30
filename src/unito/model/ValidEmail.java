@@ -1,7 +1,6 @@
 package unito.model;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
@@ -10,35 +9,35 @@ import java.util.Objects;
  */
 public class ValidEmail implements Serializable {
 
-    private static long identifier;
+    private final long identifier;
 
     private final String sender;
 
-    private final String [] recipients; //destinatari
+    private final String [] recipients;
 
-    private final String subject; //oggetto
+    private final String subject;
 
     private final int size;
 
-    private final Date date; //data di creazione
+    private final Date date;
 
-    private final String textMessage; //testo del messaggio
+    private final String textMessage;
 
     /*Constructor*/
 
-    public ValidEmail(String sender, String [] recipients, String subject, String size, Date date, String textMessage) {
-        setIdentifier();
-        this.sender = sender;
-        this.recipients = recipients;
-        this.subject = subject;
-        this.size = textMessage.length();
-        this.date = date;
-        this.textMessage = textMessage;
+    public ValidEmail(Email email) {
+        this.identifier = email.getIdentifier();
+        this.sender = email.getSender();
+        this.recipients = email.getRecipientsArray();
+        this.subject = email.getSubject();
+        this.size = email.getSize();
+        this.date = email.getDate();
+        this.textMessage = email.getTextMessage();
     }
 
     /*Getter*/
 
-    public static long getIdentifier() {
+    public long getIdentifier() {
         return identifier;
     }
 
@@ -66,11 +65,6 @@ public class ValidEmail implements Serializable {
         return textMessage;
     }
 
-    /*Private Setter*/
-
-    private void setIdentifier() {
-        this.identifier = System.currentTimeMillis();
-    }
 
     /*Aux*/
 
@@ -78,16 +72,16 @@ public class ValidEmail implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ValidEmail that = (ValidEmail) o;
+        Email that = (Email) o;
         return  Objects.equals(sender, that.getSender()) &&
                 Objects.equals(subject, that.getSubject()) &&
-                Arrays.equals(recipients, that.getRecipients()) &&
-                Objects.equals(textMessage, that.getTextMessage());
+                Objects.equals(recipients, that.getRecipientsArray()) &&
+                Objects.equals(date, that.getDate());
     }
 
     @Override
     public String toString() {
-        return "Identifier is: " + getIdentifier() + "\n" + "Sender: " + getSender() +"\n" + "Receiver: " + getRecipients() + "\n" +
+        return "Identifier is: " + getIdentifier() + "\n" + "Sender: " + getSender() +"\n" + "Reciver: " + getRecipients() + "\n" +
                 "Subject: " + getSubject() + "\n" + "Size: " + getSize() + "\n" + "Date: " + getDate() +"\n" + "Text: " + getTextMessage() +"\n";
     }
 }

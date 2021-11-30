@@ -35,8 +35,8 @@ public class ServerService implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("\n# ServerService is now running.... #");
-        System.out.println("# ServerService -> Dedicated thread is now running -> " + Thread.currentThread().getName() + " started at: " + new Date(System.currentTimeMillis()));
+        System.out.println("\nSRV: ServerService is now running.... #");
+        System.out.println("SRV: ServerService -> Dedicated thread is now running -> " + Thread.currentThread().getName() + " started at: " + new Date(System.currentTimeMillis()));
 
         try {
             //aprire gli input e output stream;
@@ -44,7 +44,7 @@ public class ServerService implements Runnable {
             try {
                 this.tryToConnect = ((ValidAccount) inStream.readObject());
                 if (tryToConnect != null) {
-                    System.out.println("# ServerService -> ValidAccount to authenticate received. Waiting for authentication... # ");
+                    serverManager.writeOnConsole("SRV: ServerService. ValidAccount to authenticate received. Waiting for authentication... ");
                     /* Autenticazione del Client... */
                     if (authenticateClient()) {
                         serverManager.writeOnConsole("LOG: Authentication completed. User: " + tryToConnect.getAddress());
@@ -58,16 +58,16 @@ public class ServerService implements Runnable {
                                 case CANCELLAMESSAGGIO -> cancellaEmail();
                             }
                         } else {
-                            serverManager.writeOnConsole("ERROR: Request Type is Invalid!");
+                            serverManager.writeOnConsole("ERR: Request Type is Invalid!");
                         }
                     } else {
-                        serverManager.writeOnConsole("Authentication failed!");
+                        serverManager.writeOnConsole("ERR: Authentication failed!");
                     }
                 } else {
-                    serverManager.writeOnConsole("ERROR: Account null! Aborting ...");
+                    serverManager.writeOnConsole("ERR: Account null! Aborting ...");
                 }
             } catch (ClassNotFoundException e) {
-                System.out.println("# ServerService -> input Stream error: received wrong object. #");
+                System.out.println("SRV: ServerService -> input Stream error: received wrong object. #");
                 e.printStackTrace();
             } finally {
                 incoming.close();
@@ -87,10 +87,9 @@ public class ServerService implements Runnable {
 
             List<String> addressesNotFounded = new LinkedList<String>();
 
+            List<String> addressesFounded = new LinkedList<String>();
+
             if (validEmailRecived != null) {
-
-                //System.out.println("I destinatari del messaggio sono n=" + validEmailRecived.getRecipients().length);
-
 
                 for (String r : validEmailRecived.getRecipients()) {
 
@@ -104,15 +103,23 @@ public class ServerService implements Runnable {
                         }
                     }
 
-                    if (!addressFound) addressesNotFounded.add(r);
+                    if (addressFound) {
+                        addressesFounded.add(r);
+                    } else {
+                        addressesNotFounded.add(r);
+                    }
                 }
 
                 outStream.writeObject(addressesNotFounded);
 
+                serverManager.writeOnConsole("LOG: RiceviEmail address not founded: " + addressesNotFounded.size());
+
+                serverManager.writeOnConsole("LOG: RiceviEmail address founded: " + addressesFounded.size());
+
                 serverManager.writeOnConsole("LOG: RiceviEmail completed with the client " + tryToConnect.getAddress());
+
             } else {
-                //ho ricevuto una mail nulla, non faccio niente
-                serverManager.writeOnConsole("LOG: RiceviEmail(null) FAILED with the client " + tryToConnect.getAddress());
+                serverManager.writeOnConsole("ERR: RiceviEmail(null) failed with the client " + tryToConnect.getAddress());
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -128,11 +135,11 @@ public class ServerService implements Runnable {
             if (emailBean != null) {
                 emailList = emailBean.getEmailListToSend();
                 outStream.writeObject(emailList);
-                serverManager.writeOnConsole("InvioEmail completed with the client " + tryToConnect.getAddress() + ", " + "sended " + emailList.size());
+                serverManager.writeOnConsole("LOG: InvioEmail completed with the client " + tryToConnect.getAddress() + " " + "sended " + emailList.size());
                 emailBean.setEmptyListToSend();
             } else {
                 outStream.writeObject(ClientRequestResult.ERROR);
-                serverManager.writeOnConsole("InvioEmail completed with the client " + tryToConnect.getAddress() + ", " + "sended " + emailList.size());
+                serverManager.writeOnConsole("ERR: InvioEmail failed with the client " + tryToConnect.getAddress() + " " + "sended " + emailList.size());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -146,12 +153,12 @@ public class ServerService implements Runnable {
         System.out.println(emailBean);
         try {
             if (emailBean != null) {
-                System.out.println("HANDSHAKING il bean contiene: " + emailBean.getEmailList().size());
+                System.out.println("LOG: Handshaking, client have: " + emailBean.getEmailList().size() + " emails.");
                 outStream.writeObject(emailBean.getEmailList());
                 serverManager.writeOnConsole("LOG: Handshaking completed with the client " + tryToConnect.getAddress() + ", " + "sended " + emailBean.getEmailList().size() + " email.");
             } else {
                 outStream.writeObject(ClientRequestResult.ERROR);
-                serverManager.writeOnConsole("Handshaking FAILED with the client " + tryToConnect.getAddress());
+                serverManager.writeOnConsole("ERR: Handshaking failed with the client " + tryToConnect.getAddress());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -176,6 +183,9 @@ public class ServerService implements Runnable {
                         break;
                     }
                 }
+            } else {
+                outStream.writeObject(false);
+                serverManager.writeOnConsole("ERR: CancellaEmail failed with the client " + tryToConnect.getAddress());
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -186,7 +196,6 @@ public class ServerService implements Runnable {
     private boolean requestIdentification() {
         try {
             this.requestType = (ClientRequestType) inStream.readObject();
-
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return false;
@@ -214,16 +223,16 @@ public class ServerService implements Runnable {
 
     private boolean authenticateClient() {
         if (tryToConnect != null) {
-            System.out.println("# ServerService -> Trying to connect:\n# ServerService -> address: " + tryToConnect.getAddress() + "\n# ServerService -> password: " + tryToConnect.getPassword());
+            System.out.println("SRV: ServerService -> Trying to connect:\n# ServerService -> address: " + tryToConnect.getAddress() + "\n# ServerService -> password: " + tryToConnect.getPassword());
         } else {
-            System.out.println("ValidAccount TryToConnect is null");
+            System.out.println("SRV: ValidAccount TryToConnect is null");
             return false;
         }
 
         if (serverManager.authenticateThisAccount(tryToConnect)) {
             try {
                 this.outStream.writeObject(ClientRequestResult.SUCCESS);
-                System.out.println("risultato spedito");
+                System.out.println("SRV: ServerService -> Authentication completed with the client.");
             } catch (IOException e) {
                 e.printStackTrace();
             }

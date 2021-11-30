@@ -54,4 +54,9 @@ public class ValidAccount implements Serializable {
         }
     }
 
+    @Override
+    public String toString() {
+        return "ValidAccount address: " + address + " password: " + password;
+    }
+
 }
