@@ -1,27 +1,15 @@
 package unito.controller;
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import unito.Launcher;
 import unito.ServerManager;
 import unito.view.ViewFactory;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-public class MainWindowController extends BaseController implements Initializable {
+public class MainWindowController extends BaseController {
 
     @FXML
     private TextArea console;
-
-    @FXML
-    private Button getConnectedClientButton;
-
-    public static TextArea staticTxtArea;
 
     /**
      * @param serverManager
@@ -33,7 +21,6 @@ public class MainWindowController extends BaseController implements Initializabl
     }
 
     public void printOnConsole(String str) {
-        //System.out.println(str);
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -41,11 +28,6 @@ public class MainWindowController extends BaseController implements Initializabl
                 console.appendText(str);
             }
         });
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        staticTxtArea = console;
     }
 
 }

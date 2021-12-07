@@ -1,6 +1,7 @@
 package unito.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
@@ -65,17 +66,16 @@ public class ValidEmail implements Serializable {
         return textMessage;
     }
 
-
     /*Aux*/
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Email that = (Email) o;
+        ValidEmail that = (ValidEmail) o;
         return  Objects.equals(sender, that.getSender()) &&
                 Objects.equals(subject, that.getSubject()) &&
-                Objects.equals(recipients, that.getRecipientsArray()) &&
+                Arrays.equals(recipients, that.getRecipients()) &&
                 Objects.equals(date, that.getDate());
     }
 

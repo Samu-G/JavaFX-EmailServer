@@ -8,9 +8,9 @@ import unito.view.ViewFactory;
  */
 public abstract class BaseController {
 
-    protected ServerManager serverManager;
-    protected ViewFactory viewFactory;
-    private String fxmlName;
+    private final ServerManager serverManager;
+    private final ViewFactory viewFactory;
+    private final String fxmlName;
 
     /**
      * @param serverManager

@@ -9,10 +9,10 @@ public class Launcher extends Application {
 
     public static final int NUM_OF_THREAD = 4;
 
-    //init model
+    //init application manager
     private final ServerManager serverManager = new ServerManager(PersistenceAccess.loadFromPersistenceEmailBean());
 
-    //init view
+    //init view manager
     private final ViewFactory viewFactory = new ViewFactory(serverManager);
 
     public static void main(String[] args) {
@@ -23,12 +23,12 @@ public class Launcher extends Application {
     public void start(Stage primaryStage) throws Exception {
         serverManager.setViewFactory(viewFactory);
         viewFactory.showMainWindow();
-        serverManager.listenerServiceThread.start();
+        serverManager.getListenerServiceThread().start();
     }
 
     @Override
     public void stop() throws Exception {
-        PersistenceAccess.saveEmailBeanToPersistence(serverManager.emailBeans);
+        PersistenceAccess.saveEmailBeanToPersistence(serverManager.getEmailBeans());
         serverManager.stopListenerServiceThread();
         serverManager.stopThreadPool();
         System.exit(0);

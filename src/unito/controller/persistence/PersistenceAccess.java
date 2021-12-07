@@ -2,7 +2,6 @@ package unito.controller.persistence;
 
 
 import unito.model.*;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,16 @@ public class PersistenceAccess {
         try {
             FileInputStream fileInputStream = new FileInputStream(VALID_EMAIL_BEANS_LOCATION);
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            resultList = (List<EmailBean>) objectInputStream.readObject();
+
+            Object o = objectInputStream.readObject();
+
+            if(o instanceof List) {
+                if(!((List<?>) o).isEmpty()) {
+                    if(((List<?>) o).get(0) instanceof EmailBean) {
+                        resultList = (List<EmailBean>)o;
+                    }
+                }
+            }
 
             /* Decripto le password di ogni account della lista */
             decodePasswords(resultList);
@@ -43,7 +51,6 @@ public class PersistenceAccess {
 
         return resultList;
     }
-
 
     public static List<ValidEmail> exampleEmailList() {
         List<ValidEmail> emailList = new ArrayList<>();
@@ -87,7 +94,7 @@ public class PersistenceAccess {
      * @param emailBeans la lista di EmailBean da salvare nel file di pesistenza
      */
     public static void saveEmailBeanToPersistence(List<EmailBean> emailBeans) {
-        System.out.print("\nSaving emailBean to emailbean....");
+        System.out.print("\nSaving emailBean....");
         try {
             File file = new File(VALID_EMAIL_BEANS_LOCATION);
             FileOutputStream fileOutputStream = new FileOutputStream(file);

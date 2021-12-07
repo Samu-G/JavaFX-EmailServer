@@ -53,8 +53,8 @@ public class EmailBean implements Serializable {
 
     @Override
     public String toString() {
-        return "Questo è il Bean di " + getEmailAccountAssociated().getAddress() + "\n" +
-                "EmailList size: " + getEmailList().size() + "\n\n";
+        return "Questo è il Bean di " + getEmailAccountAssociated().getAddress() +
+                ", numero di email: " + getEmailList().size();
     }
 
     synchronized public void setEmptyListToSend() {

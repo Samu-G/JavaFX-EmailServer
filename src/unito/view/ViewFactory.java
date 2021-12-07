@@ -8,8 +8,6 @@ import javafx.stage.Stage;
 import unito.ServerManager;
 import unito.controller.BaseController;
 import unito.controller.MainWindowController;
-
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**

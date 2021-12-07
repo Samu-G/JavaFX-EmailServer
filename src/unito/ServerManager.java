@@ -1,5 +1,6 @@
 package unito;
 
+import javafx.application.Application;
 import unito.controller.MainWindowController;
 import unito.controller.service.ListenerService;
 import unito.model.EmailBean;
@@ -18,13 +19,12 @@ import java.util.concurrent.Executors;
 public class ServerManager {
 
     /* Model */
-    public List<EmailBean> emailBeans;
-    public static MainWindowController mainWindowController;
-    public ListenerService listenerService;
+    private List<EmailBean> emailBeans;
+    private ListenerService listenerService;
     /* View */
     private ViewFactory viewFactory;
     /* Thread */
-    public Thread listenerServiceThread;
+    private Thread listenerServiceThread;
     private final ExecutorService serverThreadPool;
 
     public ServerManager(List<EmailBean> emailBeans) {
@@ -32,49 +32,6 @@ public class ServerManager {
         this.serverThreadPool = Executors.newFixedThreadPool(Launcher.NUM_OF_THREAD);
         this.listenerService = new ListenerService(serverThreadPool, this);
         this.listenerServiceThread = new Thread(listenerService);
-    }
-
-    /**
-     * @param address indirizzo email dell'account
-     * @return la liste di email quell'account (tutte quante)
-     */
-    public List<ValidEmail> getEmailsList(String address) {
-        for (EmailBean i : emailBeans) {
-            if (i.getEmailAccountAssociated().getAddress().equals(address)) {
-                return i.getEmailList();
-            } else {
-                System.out.println("c'è decisamente qualcosa che non va!");
-                return null;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @param address indirizzo email dell'account
-     * @return la liste di email non ancora inviate al client di quell'account
-     */
-    /*
-    public List<ValidEmail> getUnsendedEmailsList(String address) {
-        for (EmailBean i : emailBeans) {
-            if (i.getEmailAccountAssociated().getAddress().equals(address)) {
-                return i.getEmailListAlreadyToSend();
-            }
-        }
-        return null;
-
-    }
-    */
-
-    /**
-     * @return La lista di ValidAccount presenti sul server
-     */
-    public List<ValidAccount> getValidAccountList() {
-        List<ValidAccount> result = new ArrayList<ValidAccount>();
-        for (EmailBean i : emailBeans) {
-            result.add(i.getEmailAccountAssociated());
-        }
-        return result;
     }
 
     /**
@@ -88,6 +45,14 @@ public class ServerManager {
             }
         }
         return null;
+    }
+
+    public List<EmailBean> getEmailBeans() {
+        return emailBeans;
+    }
+
+    public Thread getListenerServiceThread() {
+        return this.listenerServiceThread;
     }
 
     /**
@@ -116,9 +81,11 @@ public class ServerManager {
      * Ferma il thread di ListenerService che accoglie i client
      */
     public void stopListenerServiceThread() {
-        if (!listenerServiceThread.isInterrupted()) {
-            listenerService.closeServerSocket();
-            listenerServiceThread.interrupt();
+        listenerService.setLoop(false);
+        try {
+            listenerServiceThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -134,4 +101,5 @@ public class ServerManager {
     public void setViewFactory(ViewFactory viewFactory) {
         this.viewFactory = viewFactory;
     }
+
 }

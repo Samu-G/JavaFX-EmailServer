@@ -4,12 +4,10 @@ import unito.ServerManager;
 import unito.model.EmailBean;
 import unito.model.ValidAccount;
 import unito.model.ValidEmail;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,37 +17,37 @@ import java.util.List;
  */
 public class ServerService implements Runnable {
 
-    private Socket incoming;
-    protected ServerManager serverManager;
+    private final Socket incoming;
+    private final ServerManager serverManager;
     private ObjectInputStream inStream;
     private ObjectOutputStream outStream;
     private ValidAccount tryToConnect;
     private ClientRequestType requestType;
-    private boolean authenticated;
+
 
     public ServerService(Socket incoming, ServerManager serverManager) {
         this.incoming = incoming;
         this.serverManager = serverManager;
-        this.authenticated = false;
     }
 
     @Override
     public void run() {
-        System.out.println("\nSRV: ServerService is now running.... #");
+        System.out.println("\nSRV: ServerService is now running....");
         System.out.println("SRV: ServerService -> Dedicated thread is now running -> " + Thread.currentThread().getName() + " started at: " + new Date(System.currentTimeMillis()));
 
         try {
-            //aprire gli input e output stream;
             openStream();
             try {
                 this.tryToConnect = ((ValidAccount) inStream.readObject());
                 if (tryToConnect != null) {
-                    serverManager.writeOnConsole("SRV: ServerService. ValidAccount to authenticate received. Waiting for authentication... ");
+                    serverManager.writeOnConsole("LOG: ServerService. ValidAccount to authenticate received. Waiting for authentication... ");
+                    System.out.println("SRV: ServerService -> Trying to connect:\n\t - address: " + tryToConnect.getAddress() + "\n\t - password: " + tryToConnect.getPassword());
                     /* Autenticazione del Client... */
                     if (authenticateClient()) {
                         serverManager.writeOnConsole("LOG: Authentication completed. User: " + tryToConnect.getAddress());
                         /* Riconoscimento della richiesta... */
                         if (requestIdentification()) {
+                            System.out.println("SRV: Request Type: " + requestType);
                             serverManager.writeOnConsole("LOG: Request Type: " + requestType);
                             switch (requestType) {
                                 case HANDSHAKING -> handShaking();
@@ -67,11 +65,13 @@ public class ServerService implements Runnable {
                     serverManager.writeOnConsole("ERR: Account null! Aborting ...");
                 }
             } catch (ClassNotFoundException e) {
-                System.out.println("SRV: ServerService -> input Stream error: received wrong object. #");
+                System.out.println("SRV: ServerService -> input Stream error: received wrong object.");
                 e.printStackTrace();
             } finally {
                 incoming.close();
                 closeStream();
+                System.out.println("SRV: Connection with the client closed.");
+                System.out.println("SRV: ServerService -> Dedicated thread is stopped -> " + Thread.currentThread().getName() + " ended at: " + new Date(System.currentTimeMillis()));
                 serverManager.writeOnConsole("LOG: Connection with the client closed.\n");
             }
         } catch (IOException e) {
@@ -80,24 +80,27 @@ public class ServerService implements Runnable {
     }
 
     private void riceviEmail() {
-        ValidEmail validEmailRecived;
+
+        ValidEmail validEmailReceived;
 
         try {
-            validEmailRecived = (ValidEmail) inStream.readObject();
 
-            List<String> addressesNotFounded = new LinkedList<String>();
+            Object o = inStream.readObject();
 
-            List<String> addressesFounded = new LinkedList<String>();
+            if (o instanceof ValidEmail) {
+                validEmailReceived = (ValidEmail) o;
 
-            if (validEmailRecived != null) {
+                List<String> addressesNotFounded = new LinkedList<>();
 
-                for (String r : validEmailRecived.getRecipients()) {
+                List<String> addressesFounded = new LinkedList<>();
+
+                for (String r : validEmailReceived.getRecipients()) {
 
                     boolean addressFound = false;
 
-                    for (EmailBean toCheck : serverManager.emailBeans) {
+                    for (EmailBean toCheck : serverManager.getEmailBeans()) {
                         if (toCheck.getEmailAccountAssociated().getAddress().equals(r)) {
-                            toCheck.addEmail(validEmailRecived);
+                            toCheck.addEmail(validEmailReceived);
                             addressFound = true;
                             break;
                         }
@@ -129,7 +132,7 @@ public class ServerService implements Runnable {
     private void invioEmail() {
 
         EmailBean emailBean = serverManager.getEmailBean(tryToConnect);
-        List<ValidEmail> emailList = new ArrayList<>();
+        List<ValidEmail> emailList;
 
         try {
             if (emailBean != null) {
@@ -139,7 +142,7 @@ public class ServerService implements Runnable {
                 emailBean.setEmptyListToSend();
             } else {
                 outStream.writeObject(ClientRequestResult.ERROR);
-                serverManager.writeOnConsole("ERR: InvioEmail failed with the client " + tryToConnect.getAddress() + " " + "sended " + emailList.size());
+                serverManager.writeOnConsole("ERR: InvioEmail failed with the client " + tryToConnect.getAddress() + " " + "sended " + 0);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -153,7 +156,7 @@ public class ServerService implements Runnable {
         System.out.println(emailBean);
         try {
             if (emailBean != null) {
-                System.out.println("LOG: Handshaking, client have: " + emailBean.getEmailList().size() + " emails.");
+                System.out.println("SRV: Handshaking, client have: " + emailBean.getEmailList().size() + " emails.");
                 outStream.writeObject(emailBean.getEmailList());
                 serverManager.writeOnConsole("LOG: Handshaking completed with the client " + tryToConnect.getAddress() + ", " + "sended " + emailBean.getEmailList().size() + " email.");
             } else {
@@ -167,22 +170,27 @@ public class ServerService implements Runnable {
     }
 
     private void cancellaEmail() {
-        ValidEmail validEmailRecived;
+
+        ValidEmail validEmailReceived;
 
         try {
 
-            validEmailRecived = (ValidEmail) inStream.readObject();
+            Object o = inStream.readObject();
 
-            if (validEmailRecived != null) {
+            if (o instanceof ValidEmail) {
+
+                validEmailReceived = (ValidEmail) o;
+
                 for (ValidEmail email : serverManager.getEmailBean(tryToConnect).getEmailList()) {
 
-                    if (email.equals(validEmailRecived)) {
+                    if (email.equals(validEmailReceived)) {
                         boolean res = serverManager.getEmailBean(tryToConnect).getEmailList().remove(email);
                         outStream.writeObject(res);
                         serverManager.writeOnConsole("LOG: CancellaEmail completed with the client " + tryToConnect.getAddress());
                         break;
                     }
                 }
+
             } else {
                 outStream.writeObject(false);
                 serverManager.writeOnConsole("ERR: CancellaEmail failed with the client " + tryToConnect.getAddress());
@@ -190,12 +198,19 @@ public class ServerService implements Runnable {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+
     }
 
 
     private boolean requestIdentification() {
         try {
-            this.requestType = (ClientRequestType) inStream.readObject();
+
+            Object o = inStream.readObject();
+
+            if (o instanceof ClientRequestType) {
+                this.requestType = (ClientRequestType) o;
+            }
+
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return false;
@@ -222,9 +237,7 @@ public class ServerService implements Runnable {
     }
 
     private boolean authenticateClient() {
-        if (tryToConnect != null) {
-            System.out.println("SRV: ServerService -> Trying to connect:\n# ServerService -> address: " + tryToConnect.getAddress() + "\n# ServerService -> password: " + tryToConnect.getPassword());
-        } else {
+        if (tryToConnect == null) {
             System.out.println("SRV: ValidAccount TryToConnect is null");
             return false;
         }
@@ -236,7 +249,6 @@ public class ServerService implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            this.authenticated = true;
             return true;
         } else {
             try {
@@ -244,7 +256,6 @@ public class ServerService implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            this.authenticated = false;
             return false;
         }
     }

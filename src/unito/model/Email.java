@@ -1,7 +1,6 @@
 package unito.model;
 
 import javafx.beans.property.SimpleStringProperty;
-
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;

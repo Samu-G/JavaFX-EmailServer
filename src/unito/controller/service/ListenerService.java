@@ -1,16 +1,9 @@
 package unito.controller.service;
 
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.fxml.Initializable;
 import unito.ServerManager;
-import unito.controller.BaseController;
-import unito.view.ViewFactory;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URL;
-import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -22,6 +15,7 @@ public class ListenerService implements Runnable {
     private ServerSocket listener;
     private final ExecutorService serverThreadPool;
     private final ServerManager serverManager;
+    private boolean loop;
 
     public ListenerService(ExecutorService serverThreadPool, ServerManager serverManager) {
         this.serverThreadPool = serverThreadPool;
@@ -42,31 +36,35 @@ public class ListenerService implements Runnable {
 
     @Override
     public void run() {
-        listener = openServerSocket();
+        do {
+            listener = openServerSocket();
 
-        if (listener != null) {
-            serverManager.writeOnConsole("LOG: ListenerService is now running on Port " + listener.getLocalPort());
-            for (; ; ) {
-                Socket incoming = null; //pending for new connection
-                try {
-                    incoming = listener.accept();
+            if (listener != null) {
+                serverManager.writeOnConsole("LOG: ListenerService is now running on Port " + listener.getLocalPort());
+                for (; ; ) {
+                    Socket incoming = null; //pending for new connection
+                    try {
+                        incoming = listener.accept();
 
-                    serverManager.writeOnConsole("LOG: Connection accepted with the client." + incoming.getPort());
+                        serverManager.writeOnConsole("LOG: Connection accepted with the client." + incoming.getPort());
 
-                    //init dedicated socket service
-                    Runnable task = new ServerService(incoming, serverManager);
+                        //init dedicated socket service
+                        Runnable task = new ServerService(incoming, serverManager);
 
-                    //starting runnable
-                    serverThreadPool.execute(task);
+                        //starting runnable
+                        serverThreadPool.execute(task);
 
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-        }
+        } while (loop);
+
+        closeServerSocket();
     }
 
-    public void closeServerSocket() {
+    private void closeServerSocket() {
         System.out.println("\ncloseServerSocket() called.");
         if (listener != null) {
             if (listener.isClosed()) {
@@ -83,4 +81,7 @@ public class ListenerService implements Runnable {
         }
     }
 
+    public void setLoop(boolean b) {
+        this.loop = b;
+    }
 }
