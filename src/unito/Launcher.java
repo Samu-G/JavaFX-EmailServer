@@ -5,6 +5,9 @@ import javafx.stage.Stage;
 import unito.controller.persistence.PersistenceAccess;
 import unito.view.ViewFactory;
 
+/**
+ * Classe usata per avviare l'applicazione
+ */
 public class Launcher extends Application {
 
     public static final int NUM_OF_THREAD = 4;
@@ -19,6 +22,12 @@ public class Launcher extends Application {
         launch(args);
     }
 
+    /**
+     * Avvia l'applicazione
+     *
+     * @param primaryStage
+     * @throws Exception
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         serverManager.setViewFactory(viewFactory);
@@ -26,6 +35,11 @@ public class Launcher extends Application {
         serverManager.getListenerServiceThread().start();
     }
 
+    /**
+     * Chiude l'applicazione
+     *
+     * @throws Exception
+     */
     @Override
     public void stop() throws Exception {
         PersistenceAccess.saveEmailBeanToPersistence(serverManager.getEmailBeans());

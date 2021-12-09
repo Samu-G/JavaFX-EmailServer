@@ -19,13 +19,16 @@ public class ViewFactory {
     private ArrayList<Stage> activeStages;
     public MainWindowController mainWindowController;
 
+    /**
+     * @param serverManager
+     */
     public ViewFactory(ServerManager serverManager) {
         this.serverManager = serverManager;
         activeStages = new ArrayList<Stage>();
     }
 
     /**
-     * Create controller for MainWindow. Then, initialize the Main window.
+     * Crea il controller per la MainWindow. Poi, inizializza la finestra principale
      */
     public void showMainWindow(){
         System.out.println("showMainWindow() called.");
@@ -33,10 +36,6 @@ public class ViewFactory {
         initializeView(mainWindowController, "Server");
     }
 
-    /**
-     * Load fxml file, set the controller, create and show the Scene/Stage.
-     * @param baseController Controller of the Stage
-     */
     private void initializeView(BaseController baseController, String windowTitle){
         System.out.println("initializeView() called.");
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(baseController.getFxmlName()));
@@ -56,11 +55,22 @@ public class ViewFactory {
         activeStages.add(stage);
     }
 
+    /**
+     * Chiude una finestra rimuovendola dalla lista activeStage
+     *
+     * @param stageToClose finestra da chiudere
+     */
     public void closeStage(Stage stageToClose) {
         activeStages.remove(stageToClose);
         stageToClose.close();
     }
 
+    /**
+     * Crea un alert per informare il Client
+     *
+     * @param title titolo dell'alert
+     * @param contentText contenuto dell'alert
+     */
     public static void viewAlert(String title, String contentText) {
         System.out.println("viewAllert() called.");
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

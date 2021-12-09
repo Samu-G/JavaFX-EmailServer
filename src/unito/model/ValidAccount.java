@@ -12,6 +12,10 @@ public class ValidAccount implements Serializable {
 
     /*Constructor*/
 
+    /**
+     * @param address address of ValidAccount
+     * @param password password of ValidAccount
+     */
     public ValidAccount(String address, String password) {
         this.address = address;
         this.password = password;
@@ -35,6 +39,12 @@ public class ValidAccount implements Serializable {
 
     /*Aux*/
 
+    /**
+     * Controlla se l'oggetto corrisponde al ValidAccount corrente
+     *
+     * @param obj l'oggetto da confrontare
+     * @return true se sono uguali, altrimenti false
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -54,6 +64,11 @@ public class ValidAccount implements Serializable {
         }
     }
 
+    /**
+     * Crea una stringa adatta per la visualizzazione
+     *
+     * @return l'oggetto nella relativa rappresentazione di stringa
+     */
     @Override
     public String toString() {
         return "ValidAccount address: " + address + " password: " + password;

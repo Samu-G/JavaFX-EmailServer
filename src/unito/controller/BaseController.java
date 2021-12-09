@@ -4,7 +4,7 @@ import unito.ServerManager;
 import unito.view.ViewFactory;
 
 /**
- * Questa è una classe astratta che esplicita la base dei controller.
+ * Questa è una classe astratta che esplicita la base dei controller
  */
 public abstract class BaseController {
 
@@ -24,7 +24,7 @@ public abstract class BaseController {
     }
 
     /**
-     * @return fxml file name of the related controller
+     * @return il nome del file .fxml associato al controller
      */
     public String getFxmlName() {
         return fxmlName;

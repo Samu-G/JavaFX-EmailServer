@@ -14,6 +14,11 @@ public class PersistenceAccess {
     private static final String VALID_EMAIL_BEANS_LOCATION = "src/unito/controller/persistence/emailBean.ser";
     private static final Encoder encoder = new Encoder();
 
+    /**
+     * Carica gli EmailBean dei client dal file di persistenza
+     *
+     * @return la lista di EmailBean salvate sul file di persitenza
+     */
     public static List<EmailBean> loadFromPersistenceEmailBean() {
 
         List<EmailBean> resultList = new ArrayList<>();
@@ -52,6 +57,11 @@ public class PersistenceAccess {
         return resultList;
     }
 
+    /**
+     * Crea una lista di ValidEmail di prova
+     *
+     * @return la lista di ValidEmail
+     */
     public static List<ValidEmail> exampleEmailList() {
         List<ValidEmail> emailList = new ArrayList<>();
 
@@ -64,11 +74,6 @@ public class PersistenceAccess {
         return emailList;
     }
 
-    /**
-     * Prende una lista di "EmailBean" e ne decripta le password
-     *
-     * @param persistedList la lista con le EmailBean da decriptare
-     */
     private static void decodePasswords(List<EmailBean> persistedList) {
         for (EmailBean e : persistedList) {
             String originalPassword = e.getEmailAccountAssociated().getPassword();
@@ -76,11 +81,6 @@ public class PersistenceAccess {
         }
     }
 
-    /**
-     * Prende una lista di "EmailBean" e ne cripta le password
-     *
-     * @param persistedList la lista con le EmailBean da criptare
-     */
     private static void encodePasswords(List<EmailBean> persistedList) {
         for (EmailBean e : persistedList) {
             String originalPassword = e.getEmailAccountAssociated().getPassword();

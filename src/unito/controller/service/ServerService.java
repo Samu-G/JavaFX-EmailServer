@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Classe Runnable volta a gestire UNA RICHIESTA (che può essere di vario tipo) del Client. Effettua anche l'autenticazione del Client.
+ * Classe Runnable volta a gestire una richiesta (che può essere di vario tipo) del Client. Effettua anche l'autenticazione del Client.
  */
 public class ServerService implements Runnable {
 
@@ -24,12 +24,18 @@ public class ServerService implements Runnable {
     private ValidAccount tryToConnect;
     private ClientRequestType requestType;
 
-
+    /**
+     * @param incoming connection Client-Server
+     * @param serverManager
+     */
     public ServerService(Socket incoming, ServerManager serverManager) {
         this.incoming = incoming;
         this.serverManager = serverManager;
     }
 
+    /**
+     * Autentica il Client ed identifica la richiesta
+     */
     @Override
     public void run() {
         System.out.println("\nSRV: ServerService is now running....");
@@ -38,6 +44,7 @@ public class ServerService implements Runnable {
         try {
             openStream();
             try {
+                // TODO: prima di fare il cast bisogna controllare l'oggetto letto?
                 this.tryToConnect = ((ValidAccount) inStream.readObject());
                 if (tryToConnect != null) {
                     serverManager.writeOnConsole("LOG: ServerService. ValidAccount to authenticate received. Waiting for authentication... ");
@@ -200,7 +207,6 @@ public class ServerService implements Runnable {
         }
 
     }
-
 
     private boolean requestIdentification() {
         try {

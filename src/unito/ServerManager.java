@@ -1,14 +1,9 @@
 package unito;
 
-import javafx.application.Application;
-import unito.controller.MainWindowController;
 import unito.controller.service.ListenerService;
 import unito.model.EmailBean;
 import unito.model.ValidAccount;
-import unito.model.ValidEmail;
 import unito.view.ViewFactory;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,6 +22,9 @@ public class ServerManager {
     private Thread listenerServiceThread;
     private final ExecutorService serverThreadPool;
 
+    /**
+     * @param emailBeans list of EmailBean
+     */
     public ServerManager(List<EmailBean> emailBeans) {
         this.emailBeans = emailBeans;
         this.serverThreadPool = Executors.newFixedThreadPool(Launcher.NUM_OF_THREAD);
@@ -47,17 +45,25 @@ public class ServerManager {
         return null;
     }
 
+    /**
+     * @return la lista di EmailBean
+     */
     public List<EmailBean> getEmailBeans() {
         return emailBeans;
     }
 
+    /**
+     * @return il Thread del ListenerService
+     */
     public Thread getListenerServiceThread() {
         return this.listenerServiceThread;
     }
 
     /**
+     * Autentica il ValidAccount
+     *
      * @param toAuthenticate il ValidAccount da autenticare
-     * @return true se trova l'account e le credenziali corrette, false altrimenti
+     * @return true se trova l'account e le credenziali sono corrette, false altrimenti
      */
     public boolean authenticateThisAccount(ValidAccount toAuthenticate) {
         for (EmailBean i : emailBeans) {
@@ -71,14 +77,14 @@ public class ServerManager {
     /**
      * Scrive sulla console grafica del server il paramentro passato a string
      *
-     * @param string La stringa da scrivere sulla console prova
+     * @param string la stringa da scrivere sulla console del Server
      */
     public void writeOnConsole(String string) {
         viewFactory.mainWindowController.printOnConsole(string);
     }
 
     /**
-     * Ferma il thread di ListenerService che accoglie i client
+     * Ferma il thread di ListenerService che accoglie i Client
      */
     public void stopListenerServiceThread() {
         listenerService.setLoop(false);
@@ -90,7 +96,7 @@ public class ServerManager {
     }
 
     /**
-     * Termina il pool di Thread che gestisce le richieste dei client
+     * Termina il pool di Thread che gestisce le richieste dei Client
      */
     public void stopThreadPool() {
         while (!serverThreadPool.isTerminated()) {
@@ -98,6 +104,11 @@ public class ServerManager {
         }
     }
 
+    /**
+     * Stabilisce la ViewFactory per il ServerManager
+     *
+     * @param viewFactory riferimento alla ViewFactory per il ServerManager
+     */
     public void setViewFactory(ViewFactory viewFactory) {
         this.viewFactory = viewFactory;
     }
