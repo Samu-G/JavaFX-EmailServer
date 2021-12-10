@@ -14,7 +14,7 @@ public class Encoder {
      * Prende la password e la cripta
      *
      * @param text password da criptare
-     * @retun la password criptata
+     * @return la password criptata
      */
     public String encode(String text){
         try {
