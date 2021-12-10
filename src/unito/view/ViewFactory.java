@@ -72,7 +72,7 @@ public class ViewFactory {
      * @param contentText contenuto dell'alert
      */
     public static void viewAlert(String title, String contentText) {
-        System.out.println("viewAllert() called.");
+        System.out.println("viewAlert() called.");
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
