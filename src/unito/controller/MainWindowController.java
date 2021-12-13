@@ -6,6 +6,9 @@ import javafx.scene.control.TextArea;
 import unito.ServerManager;
 import unito.view.ViewManager;
 
+/**
+ * Classe del controller utilizzato per la finestra principale dove viene mostrata la console del server
+ */
 public class MainWindowController extends BaseController {
 
     @FXML
@@ -20,6 +23,11 @@ public class MainWindowController extends BaseController {
         super(serverManager, viewManager, fxmlName);
     }
 
+    /**
+     * Scrive sulla console grafica del server il paramentro passato a str
+     *
+     * @param str la stringa da scrivere sulla console del Server
+     */
     public void printOnConsole(String str) {
         Platform.runLater(new Runnable() {
             @Override

@@ -13,13 +13,13 @@ import java.util.ArrayList;
 /**
  * Classe usata per manipolare la view (inizializzare le Window, connettere il controller alla View, ... )
  */
-public class ViewManager {
+public class ViewFactory {
 
     private ServerManager serverManager;
     private ArrayList<Stage> activeStages;
     public MainWindowController mainWindowController;
 
-    public ViewManager(ServerManager serverManager) {
+    public ViewFactory(ServerManager serverManager) {
         this.serverManager = serverManager;
         activeStages = new ArrayList<Stage>();
     }

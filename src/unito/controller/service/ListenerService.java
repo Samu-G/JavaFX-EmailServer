@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutorService;
 
 /**
  * Classe Runnable, con un socket sempre in ascolto accetta le richieste di connessione da parte dei client
- * Poi DELEGA A SERVERSERVICE il compito di fare il riconoscimento delle credenziali
+ * Poi delega a ServerService il compito di fare il riconoscimento delle credenziali
  */
 public class ListenerService implements Runnable {
 
@@ -17,6 +17,10 @@ public class ListenerService implements Runnable {
     private final ServerManager serverManager;
     private boolean loop;
 
+    /**
+     * @param serverThreadPool pool of Thread
+     * @param serverManager
+     */
     public ListenerService(ExecutorService serverThreadPool, ServerManager serverManager) {
         this.serverThreadPool = serverThreadPool;
         this.serverManager = serverManager;
@@ -34,6 +38,9 @@ public class ListenerService implements Runnable {
         return serverSocket;
     }
 
+    /**
+     * Apre la socket e si mette in ascolto per richieste da parte dei Client
+     */
     @Override
     public void run() {
         do {
@@ -81,6 +88,11 @@ public class ListenerService implements Runnable {
         }
     }
 
+    /**
+     * Setta il valore per la variabile booleana
+     *
+     * @param b true continua il ciclo, false lo interrompe
+     */
     public void setLoop(boolean b) {
         this.loop = b;
     }
