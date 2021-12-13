@@ -92,8 +92,6 @@ public class ListenerService implements Runnable {
 
     /**
      * Setta il valore loop che interrompe il ciclo di ascolto del server
-     *
-     * @param value
      */
     public void setLoop(boolean value) {
         this.loop = value;
