@@ -25,6 +25,7 @@ public class ListenerService implements Runnable {
     public ListenerService(ExecutorService serverThreadPool, ServerManager serverManager) {
         this.serverThreadPool = serverThreadPool;
         this.serverManager = serverManager;
+        this.loop = true;
     }
 
     private void openServerSocket() {
@@ -50,7 +51,7 @@ public class ListenerService implements Runnable {
             do {
                 serverManager.writeOnConsole("LOG: ListenerService is now running on Port " + listener.getLocalPort());
 
-                Socket incoming = null; //pending for new connection
+                Socket incoming; //pending for new connection
 
                 try {
                     incoming = listener.accept();

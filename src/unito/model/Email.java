@@ -43,6 +43,10 @@ public class Email {
             s = s.concat(rec + ", ");
         }
 
+        if (s.length() > 0 && s.charAt(s.length() - 2) == ',') {
+            s = s.substring(0, s.length() - 2);
+        }
+
         this.recipients = new SimpleStringProperty(s);
         this.recipients_array = recipient;
         this.subject = new SimpleStringProperty(subject);
@@ -60,6 +64,10 @@ public class Email {
         String s = "";
         for (String rec : validEmail.getRecipients()) {
             s = s.concat(rec + ", ");
+        }
+
+        if (s.length() > 0 && s.charAt(s.length() - 2) == ',') {
+            s = s.substring(0, s.length() - 2);
         }
 
         this.recipients = new SimpleStringProperty(s);
@@ -119,12 +127,6 @@ public class Email {
 
     /*Aux*/
 
-    /**
-     * Controlla se l'oggetto corrisponde all'EmailBean corrente
-     *
-     * @param o l'oggetto da confrontare
-     * @return true se sono uguali, altrimenti false
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -136,11 +138,6 @@ public class Email {
                 Objects.equals(date, that.date);
     }
 
-    /**
-     * Crea una stringa adatta per la visualizzazione
-     *
-     * @return l'oggetto nella relativa rappresentazione di stringa
-     */
     @Override
     public String toString() {
         return "Sender: " + getSender() + "\n" +

@@ -2,6 +2,7 @@ package unito.controller.persistence;
 
 import unito.ServerManager;
 import unito.model.*;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,11 +66,20 @@ public class PersistenceAccess {
     public static List<ValidEmail> exampleEmailList() {
         List<ValidEmail> emailList = new ArrayList<>();
 
-        String[] destinatari = new String[] {"user1@email.com", "user2@email.com", "user3@email.com"};
+        String testoMessaggioDiProva = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
-        Email email = new Email("Mittente", destinatari, "Prova", "Email di prova");
+        String[] destinatari1 = new String[]{"user1@email.com"};
+        Email email1 = new Email("user1@email.com", destinatari1, "Mail dest. singolo", testoMessaggioDiProva);
 
-        emailList.add(new ValidEmail(email));
+        String[] destinatari2 = new String[]{"user1@email.com", "user2@email.com"};
+        Email email2 = new Email("user2@email.com", destinatari2, "Mail a due destinatari", testoMessaggioDiProva);
+
+        String[] destinatari3 = new String[]{"user1@email.com", "user2@email.com", "user3@email.com"};
+        Email email3 = new Email("user3@email.com", destinatari3, "Mail dest. multiplo", testoMessaggioDiProva);
+
+        emailList.add(new ValidEmail(email1));
+        emailList.add(new ValidEmail(email2));
+        emailList.add(new ValidEmail(email3));
 
         return emailList;
     }
