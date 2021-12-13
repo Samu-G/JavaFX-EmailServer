@@ -13,31 +13,30 @@ import java.util.ArrayList;
 /**
  * Classe usata per manipolare la view (inizializzare le Window, connettere il controller alla View, ... )
  */
-public class ViewFactory {
+public class ViewManager {
 
-    private ServerManager serverManager;
-    private ArrayList<Stage> activeStages;
+    private final ServerManager serverManager;
+    private final ArrayList<Stage> activeStages;
     public MainWindowController mainWindowController;
 
-    public ViewFactory(ServerManager serverManager) {
+    /**
+     * @param serverManager
+     */
+    public ViewManager(ServerManager serverManager) {
         this.serverManager = serverManager;
         activeStages = new ArrayList<Stage>();
     }
 
     /**
-     * Create controller for MainWindow. Then, initialize the Main window.
+     * Crea il controller per la MainWindow. Poi, inizializza la finestra principale
      */
-    public void showMainWindow(){
+    public void showMainWindow() {
         System.out.println("showMainWindow() called.");
         mainWindowController = new MainWindowController(serverManager, this, "MainWindow.fxml");
         initializeView(mainWindowController, "Server");
     }
 
-    /**
-     * Load fxml file, set the controller, create and show the Scene/Stage.
-     * @param baseController Controller of the Stage
-     */
-    private void initializeView(BaseController baseController, String windowTitle){
+    private void initializeView(BaseController baseController, String windowTitle) {
         System.out.println("initializeView() called.");
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(baseController.getFxmlName()));
         fxmlLoader.setController(baseController);
@@ -56,13 +55,24 @@ public class ViewFactory {
         activeStages.add(stage);
     }
 
+    /**
+     * Chiude una finestra rimuovendola dalla lista activeStages
+     *
+     * @param stageToClose finestra da chiudere
+     */
     public void closeStage(Stage stageToClose) {
         activeStages.remove(stageToClose);
         stageToClose.close();
     }
 
+    /**
+     * Crea un alert per informare il Client
+     *
+     * @param title titolo dell'alert
+     * @param contentText contenuto dell'alert
+     */
     public static void viewAlert(String title, String contentText) {
-        System.out.println("viewAllert() called.");
+        System.out.println("viewAlert() called.");
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);

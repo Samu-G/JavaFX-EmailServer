@@ -15,16 +15,16 @@ public class MainWindowController extends BaseController {
     private TextArea console;
 
     /**
-     * @param serverManager
-     * @param viewManager   abstract view controller
-     * @param fxmlName      fxml file path of this controller
+     * @param serverManager riferimento al ServerManger dell'applicazione
+     * @param viewManager   riferimento al ViewManager dell'applicazione
+     * @param fxmlName      path del file .fxml
      */
     public MainWindowController(ServerManager serverManager, ViewManager viewManager, String fxmlName) {
         super(serverManager, viewManager, fxmlName);
     }
 
     /**
-     * Scrive sulla console grafica del server il paramentro passato a str
+     * Scrive sulla console grafica del server il parametro passato a str
      *
      * @param str la stringa da scrivere sulla console del Server
      */

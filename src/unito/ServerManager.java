@@ -1,14 +1,9 @@
 package unito;
 
-import javafx.application.Application;
-import unito.controller.MainWindowController;
 import unito.controller.service.ListenerService;
 import unito.model.EmailBean;
 import unito.model.ValidAccount;
-import unito.model.ValidEmail;
-import unito.view.ViewFactory;
-
-import java.util.ArrayList;
+import unito.view.ViewManager;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,14 +14,17 @@ import java.util.concurrent.Executors;
 public class ServerManager {
 
     /* Model */
-    private List<EmailBean> emailBeans;
-    private ListenerService listenerService;
+    private final List<EmailBean> emailBeans;
+    private final ListenerService listenerService;
     /* View */
-    private ViewFactory viewFactory;
+    private ViewManager viewManager;
     /* Thread */
-    private Thread listenerServiceThread;
+    private final Thread listenerServiceThread;
     private final ExecutorService serverThreadPool;
 
+    /**
+     * @param emailBeans la lista delle EmailBean
+     */
     public ServerManager(List<EmailBean> emailBeans) {
         this.emailBeans = emailBeans;
         this.serverThreadPool = Executors.newFixedThreadPool(Launcher.NUM_OF_THREAD);
@@ -55,9 +53,16 @@ public class ServerManager {
         return this.listenerServiceThread;
     }
 
+
+    public void setViewManager(ViewManager viewManager) {
+        this.viewManager = viewManager;
+    }
+
     /**
+     * Restituisce true se l'account è presente nel database del server, false altrimenti
+     *
      * @param toAuthenticate il ValidAccount da autenticare
-     * @return true se trova l'account e le credenziali corrette, false altrimenti
+     * @return risultato autenticazione
      */
     public boolean authenticateThisAccount(ValidAccount toAuthenticate) {
         for (EmailBean i : emailBeans) {
@@ -69,16 +74,16 @@ public class ServerManager {
     }
 
     /**
-     * Scrive sulla console grafica del server il paramentro passato a string
+     * Scrive sulla console grafica del server il parametro passato a string
      *
      * @param string La stringa da scrivere sulla console prova
      */
     public void writeOnConsole(String string) {
-        viewFactory.mainWindowController.printOnConsole(string);
+        viewManager.mainWindowController.printOnConsole(string);
     }
 
     /**
-     * Ferma il thread di ListenerService che accoglie i client
+     * Soft stop del thread ListenerService che accoglie i client
      */
     public void stopListenerServiceThread() {
         listenerService.setLoop(false);
@@ -90,16 +95,12 @@ public class ServerManager {
     }
 
     /**
-     * Termina il pool di Thread che gestisce le richieste dei client
+     * Termina il pool di Thread che gestisce le richieste del client
      */
     public void stopThreadPool() {
         while (!serverThreadPool.isTerminated()) {
             serverThreadPool.shutdown();
         }
-    }
-
-    public void setViewFactory(ViewFactory viewFactory) {
-        this.viewFactory = viewFactory;
     }
 
 }

@@ -1,6 +1,7 @@
 package unito.model;
 
 import javafx.beans.property.SimpleStringProperty;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
@@ -34,12 +35,6 @@ public class Email {
 
     /*Constructor*/
 
-    /**
-     * @param sender sender of the email
-     * @param recipient array of recipients of the email
-     * @param subject subject of the email
-     * @param textMessage message of the email
-     */
     public Email(String sender, String[] recipient, String subject, String textMessage) {
         this.sender = new SimpleStringProperty(sender);
 
@@ -58,9 +53,6 @@ public class Email {
         this.identifier = this.effectiveDate.hashCode();
     }
 
-    /**
-     * @param validEmail serializable email
-     */
     public Email(ValidEmail validEmail) {
         this.identifier = validEmail.getIdentifier();
         this.sender = new SimpleStringProperty(validEmail.getSender());
@@ -128,7 +120,7 @@ public class Email {
     /*Aux*/
 
     /**
-     * Controlla se l'oggetto corrisponde alla Email corrente
+     * Controlla se l'oggetto corrisponde all'EmailBean corrente
      *
      * @param o l'oggetto da confrontare
      * @return true se sono uguali, altrimenti false

@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
- * Classe Email (model)
+ * Classe ValidEmail (model serializzabile)
  */
 public class ValidEmail implements Serializable {
 
@@ -26,9 +26,6 @@ public class ValidEmail implements Serializable {
 
     /*Constructor*/
 
-    /**
-     * @param email
-     */
     public ValidEmail(Email email) {
         this.identifier = email.getIdentifier();
         this.sender = email.getSender();
@@ -69,6 +66,7 @@ public class ValidEmail implements Serializable {
         return textMessage;
     }
 
+
     /*Aux*/
 
     /**
@@ -89,13 +87,13 @@ public class ValidEmail implements Serializable {
     }
 
     /**
-     * Crea una stringa adatta per la visualizzazione
+     * Crea una stringa adatta per la visualizzazione su standard output
      *
      * @return l'oggetto nella relativa rappresentazione di stringa
      */
     @Override
     public String toString() {
-        return "Identifier is: " + getIdentifier() + "\n" + "Sender: " + getSender() +"\n" + "Receiver: " + getRecipients() + "\n" +
+        return "Identifier is: " + getIdentifier() + "\n" + "Sender: " + getSender() +"\n" + "Receiver: " + Arrays.toString(getRecipients()) + "\n" +
                 "Subject: " + getSubject() + "\n" + "Size: " + getSize() + "\n" + "Date: " + getDate() +"\n" + "Text: " + getTextMessage() +"\n";
     }
 }

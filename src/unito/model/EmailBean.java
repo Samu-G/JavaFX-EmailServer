@@ -1,7 +1,10 @@
 package unito.model;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+
 
 /**
  * Classe EmailBean (serializzabile) volta a gestire un Account e la sua relativa lista di Email
@@ -12,10 +15,6 @@ public class EmailBean implements Serializable {
     private final List<ValidEmail> emailList;
     private List<ValidEmail> emailListToSend;
 
-    /**
-     * @param emailAccountAssociated ValidAccount
-     * @param emailsListAssociated list of ValidEmail
-     */
     public EmailBean(ValidAccount emailAccountAssociated, List<ValidEmail> emailsListAssociated) {
         this.emailAccountAssociated = emailAccountAssociated;
         this.emailList = emailsListAssociated;

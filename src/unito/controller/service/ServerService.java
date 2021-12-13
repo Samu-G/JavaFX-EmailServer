@@ -8,12 +8,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
- * Classe Runnable volta a gestire una richiesta (che può essere di vario tipo) del Client. Effettua anche l'autenticazione del Client.
+ * Classe Runnable volta a gestire una richiesta (che può essere di vario tipo) del Client.
+ * Effettua anche l'autenticazione del Client.
  */
 public class ServerService implements Runnable {
 
@@ -25,8 +24,8 @@ public class ServerService implements Runnable {
     private ClientRequestType requestType;
 
     /**
-     * @param incoming connection Client-Server
-     * @param serverManager
+     * @param incoming      connessione Client-Server
+     * @param serverManager riferimento al ServerManager dell'app
      */
     public ServerService(Socket incoming, ServerManager serverManager) {
         this.incoming = incoming;
@@ -34,7 +33,7 @@ public class ServerService implements Runnable {
     }
 
     /**
-     * Autentica il Client ed identifica la richiesta
+     * Autentica il Client e identifica la richiesta gestendola a sua volta
      */
     @Override
     public void run() {
@@ -44,14 +43,18 @@ public class ServerService implements Runnable {
         try {
             openStream();
             try {
-                // TODO: prima di fare il cast bisogna controllare l'oggetto letto?
-                this.tryToConnect = ((ValidAccount) inStream.readObject());
-                if (tryToConnect != null) {
+                Object o = inStream.readObject();
+
+                if (o instanceof ValidAccount) {
+                    this.tryToConnect = (ValidAccount) o;
+
                     serverManager.writeOnConsole("LOG: ServerService. ValidAccount to authenticate received. Waiting for authentication... ");
                     System.out.println("SRV: ServerService -> Trying to connect:\n\t - address: " + tryToConnect.getAddress() + "\n\t - password: " + tryToConnect.getPassword());
+
                     /* Autenticazione del Client... */
                     if (authenticateClient()) {
                         serverManager.writeOnConsole("LOG: Authentication completed. User: " + tryToConnect.getAddress());
+
                         /* Riconoscimento della richiesta... */
                         if (requestIdentification()) {
                             System.out.println("SRV: Request Type: " + requestType);
@@ -69,10 +72,11 @@ public class ServerService implements Runnable {
                         serverManager.writeOnConsole("ERR: Authentication failed!");
                     }
                 } else {
-                    serverManager.writeOnConsole("ERR: Account null! Aborting ...");
+                    System.out.println("SRV: ServerService -> input Stream error: received wrong object.");
                 }
+
             } catch (ClassNotFoundException e) {
-                System.out.println("SRV: ServerService -> input Stream error: received wrong object.");
+                System.out.println("SRV: ServerService -> input Stream error");
                 e.printStackTrace();
             } finally {
                 incoming.close();
@@ -86,6 +90,9 @@ public class ServerService implements Runnable {
         }
     }
 
+    /**
+     * Riceve le email dal Client prelevandole dal suo EmailBean
+     */
     private void riceviEmail() {
 
         ValidEmail validEmailReceived;
@@ -105,9 +112,10 @@ public class ServerService implements Runnable {
 
                     boolean addressFound = false;
 
-                    for (EmailBean toCheck : serverManager.getEmailBeans()) {
-                        if (toCheck.getEmailAccountAssociated().getAddress().equals(r)) {
-                            toCheck.addEmail(validEmailReceived);
+                    List<EmailBean> l = serverManager.getEmailBeans();
+
+                    for (EmailBean emailBean : l) {
+                        if (emailBean.getEmailAccountAssociated().getAddress().equals(r)) {
                             addressFound = true;
                             break;
                         }
@@ -136,6 +144,9 @@ public class ServerService implements Runnable {
         }
     }
 
+    /**
+     * Invia le email al Client prelevandole dal sul EmailBean
+     */
     private void invioEmail() {
 
         EmailBean emailBean = serverManager.getEmailBean(tryToConnect);
@@ -157,10 +168,14 @@ public class ServerService implements Runnable {
 
     }
 
+    /**
+     * Gestisce l'handshaking (prima connessione) con il Client
+     */
     private void handShaking() {
 
         EmailBean emailBean = serverManager.getEmailBean(tryToConnect);
         System.out.println(emailBean);
+
         try {
             if (emailBean != null) {
                 System.out.println("SRV: Handshaking, client have: " + emailBean.getEmailList().size() + " emails.");
@@ -176,6 +191,9 @@ public class ServerService implements Runnable {
 
     }
 
+    /**
+     * Rimuove l'email dalla lista dell'EmailBean e da la conferma della cancellazione al Client
+     */
     private void cancellaEmail() {
 
         ValidEmail validEmailReceived;
@@ -208,6 +226,11 @@ public class ServerService implements Runnable {
 
     }
 
+    /**
+     * Identifica la richiesta del Client
+     *
+     * @return true se è una ClientRequestType, altrimenti false
+     */
     private boolean requestIdentification() {
         try {
 
@@ -242,6 +265,11 @@ public class ServerService implements Runnable {
         }
     }
 
+    /**
+     * Autentica il Client che cerca di connettersi
+     *
+     * @return true se è registrato presso il Server, altrimenti false
+     */
     private boolean authenticateClient() {
         if (tryToConnect == null) {
             System.out.println("SRV: ValidAccount TryToConnect is null");

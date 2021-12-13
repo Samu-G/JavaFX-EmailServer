@@ -30,9 +30,9 @@ public class Launcher extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
-        serverManager.setViewFactory(viewManager);
-        viewManager.showMainWindow();
+        serverManager.setViewManager(viewManager);
         serverManager.getListenerServiceThread().start();
+        viewManager.showMainWindow();
     }
 
     /**
@@ -45,6 +45,5 @@ public class Launcher extends Application {
         PersistenceAccess.saveEmailBeanToPersistence(serverManager.getEmailBeans());
         serverManager.stopListenerServiceThread();
         serverManager.stopThreadPool();
-        System.exit(0);
     }
 }

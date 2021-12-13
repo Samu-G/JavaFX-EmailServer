@@ -1,6 +1,7 @@
 package unito.controller.service;
 
 import unito.ServerManager;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -19,54 +20,54 @@ public class ListenerService implements Runnable {
 
     /**
      * @param serverThreadPool pool of Thread
-     * @param serverManager
+     * @param serverManager    riferimento al ServerManager dell'app
      */
     public ListenerService(ExecutorService serverThreadPool, ServerManager serverManager) {
         this.serverThreadPool = serverThreadPool;
         this.serverManager = serverManager;
     }
 
-    private ServerSocket openServerSocket() {
+    private void openServerSocket() {
         System.out.println("openServerSocket() called.");
-        ServerSocket serverSocket = null;
         try {
-            serverSocket = new ServerSocket(8189);
-            serverManager.writeOnConsole("LOG: Opened ServerSocket on port: " + serverSocket.getLocalPort());
+            listener = new ServerSocket(8189);
+            serverManager.writeOnConsole("LOG: Opened ServerSocket on port: " + listener.getLocalPort());
         } catch (IOException e) {
-            serverManager.writeOnConsole("ERROR: Opened ServerSocket failed!");
+            serverManager.writeOnConsole("ERR: Opened ServerSocket failed!");
         }
-        return serverSocket;
     }
 
     /**
-     * Apre la socket e si mette in ascolto per richieste da parte dei Client
+     * Il ServerSocket si mette in ascolto sulla porta 8189 e accoglie le richieste del client creando
+     * dei Runnable dedicati per ciascuna richiesta
      */
     @Override
     public void run() {
-        do {
-            listener = openServerSocket();
 
-            if (listener != null) {
+        openServerSocket();
+
+        if (listener != null) {
+            do {
                 serverManager.writeOnConsole("LOG: ListenerService is now running on Port " + listener.getLocalPort());
-                for (; ; ) {
-                    Socket incoming = null; //pending for new connection
-                    try {
-                        incoming = listener.accept();
 
-                        serverManager.writeOnConsole("LOG: Connection accepted with the client." + incoming.getPort());
+                Socket incoming = null; //pending for new connection
 
-                        //init dedicated socket service
-                        Runnable task = new ServerService(incoming, serverManager);
+                try {
+                    incoming = listener.accept();
 
-                        //starting runnable
-                        serverThreadPool.execute(task);
+                    serverManager.writeOnConsole("LOG: Connection accepted with the client." + incoming.getPort());
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    //init dedicated socket service
+                    Runnable task = new ServerService(incoming, serverManager);
+
+                    //starting runnable
+                    serverThreadPool.execute(task);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            }
-        } while (loop);
+            } while (loop);
+        }
 
         closeServerSocket();
     }
@@ -84,16 +85,16 @@ public class ListenerService implements Runnable {
                 }
             }
         } else {
-            serverManager.writeOnConsole("ERROR: ServerSocket is null!");
+            serverManager.writeOnConsole("ERR: ServerSocket is null!");
         }
     }
 
     /**
-     * Setta il valore per la variabile booleana
+     * Setta il valore loop che interrompe il ciclo di ascolto del server
      *
-     * @param b true continua il ciclo, false lo interrompe
+     * @param value
      */
-    public void setLoop(boolean b) {
-        this.loop = b;
+    public void setLoop(boolean value) {
+        this.loop = value;
     }
 }

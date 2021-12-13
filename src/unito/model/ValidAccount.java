@@ -12,10 +12,6 @@ public class ValidAccount implements Serializable {
 
     /*Constructor*/
 
-    /**
-     * @param address address of ValidAccount
-     * @param password password of ValidAccount
-     */
     public ValidAccount(String address, String password) {
         this.address = address;
         this.password = password;
@@ -55,23 +51,19 @@ public class ValidAccount implements Serializable {
             System.out.println("classe non corretta");
             return false;
         } else {
-            if (this.address.equals(((ValidAccount) obj).getAddress())
-                    && this.password.equals(((ValidAccount) obj).getPassword())) {
-                return true;
-            } else {
-                return false;
-            }
+            return this.address.equals(((ValidAccount) obj).getAddress())
+                    && this.password.equals(((ValidAccount) obj).getPassword());
         }
     }
 
     /**
-     * Crea una stringa adatta per la visualizzazione
+     * Crea una stringa adatta per la visualizzazione su standard output
      *
      * @return l'oggetto nella relativa rappresentazione di stringa
      */
     @Override
     public String toString() {
-        return "ValidAccount address: " + address + " password: " + password;
+        return "address: " + address + " password: " + password;
     }
 
 }
