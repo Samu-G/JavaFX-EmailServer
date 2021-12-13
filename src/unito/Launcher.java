@@ -3,7 +3,7 @@ package unito;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import unito.controller.persistence.PersistenceAccess;
-import unito.view.ViewFactory;
+import unito.view.ViewManager;
 
 public class Launcher extends Application {
 
@@ -13,7 +13,7 @@ public class Launcher extends Application {
     private final ServerManager serverManager = new ServerManager(PersistenceAccess.loadFromPersistenceEmailBean());
 
     //init view manager
-    private final ViewFactory viewFactory = new ViewFactory(serverManager);
+    private final ViewManager viewManager = new ViewManager(serverManager);
 
     public static void main(String[] args) {
         launch(args);
@@ -21,8 +21,8 @@ public class Launcher extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        serverManager.setViewFactory(viewFactory);
-        viewFactory.showMainWindow();
+        serverManager.setViewFactory(viewManager);
+        viewManager.showMainWindow();
         serverManager.getListenerServiceThread().start();
     }
 

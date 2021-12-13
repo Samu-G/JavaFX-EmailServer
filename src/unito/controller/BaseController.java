@@ -1,7 +1,7 @@
 package unito.controller;
 
 import unito.ServerManager;
-import unito.view.ViewFactory;
+import unito.view.ViewManager;
 
 /**
  * Questa è una classe astratta che esplicita la base dei controller.
@@ -9,17 +9,17 @@ import unito.view.ViewFactory;
 public abstract class BaseController {
 
     private final ServerManager serverManager;
-    private final ViewFactory viewFactory;
+    private final ViewManager viewManager;
     private final String fxmlName;
 
     /**
      * @param serverManager
-     * @param viewFactory abstract view controller
+     * @param viewManager abstract view controller
      * @param fxmlName fxml file path of this controller
      */
-    public BaseController(ServerManager serverManager, ViewFactory viewFactory, String fxmlName) {
+    public BaseController(ServerManager serverManager, ViewManager viewManager, String fxmlName) {
         this.serverManager = serverManager;
-        this.viewFactory = viewFactory;
+        this.viewManager = viewManager;
         this.fxmlName = fxmlName;
     }
 

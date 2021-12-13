@@ -39,7 +39,7 @@ public class Email {
 
         String s = "";
         for (String rec : recipient) {
-            s.concat(rec + " ");
+            s = s.concat(rec + ", ");
         }
 
         this.recipients = new SimpleStringProperty(s);
@@ -58,7 +58,7 @@ public class Email {
 
         String s = "";
         for (String rec : validEmail.getRecipients()) {
-            s.concat(rec + ", ");
+            s = s.concat(rec + ", ");
         }
 
         this.recipients = new SimpleStringProperty(s);
@@ -88,7 +88,7 @@ public class Email {
         return this.sender;
     }
 
-    public SimpleStringProperty getrecipientsProperty() {
+    public SimpleStringProperty getRecipientsProperty() {
         return this.recipients;
     }
 

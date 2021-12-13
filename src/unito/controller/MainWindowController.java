@@ -4,7 +4,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import unito.ServerManager;
-import unito.view.ViewFactory;
+import unito.view.ViewManager;
 
 public class MainWindowController extends BaseController {
 
@@ -13,11 +13,11 @@ public class MainWindowController extends BaseController {
 
     /**
      * @param serverManager
-     * @param viewFactory   abstract view controller
+     * @param viewManager   abstract view controller
      * @param fxmlName      fxml file path of this controller
      */
-    public MainWindowController(ServerManager serverManager, ViewFactory viewFactory, String fxmlName) {
-        super(serverManager, viewFactory, fxmlName);
+    public MainWindowController(ServerManager serverManager, ViewManager viewManager, String fxmlName) {
+        super(serverManager, viewManager, fxmlName);
     }
 
     public void printOnConsole(String str) {

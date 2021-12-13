@@ -1,14 +1,10 @@
 package unito;
 
-import javafx.application.Application;
-import unito.controller.MainWindowController;
 import unito.controller.service.ListenerService;
 import unito.model.EmailBean;
 import unito.model.ValidAccount;
-import unito.model.ValidEmail;
-import unito.view.ViewFactory;
+import unito.view.ViewManager;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,7 +18,7 @@ public class ServerManager {
     private List<EmailBean> emailBeans;
     private ListenerService listenerService;
     /* View */
-    private ViewFactory viewFactory;
+    private ViewManager viewManager;
     /* Thread */
     private Thread listenerServiceThread;
     private final ExecutorService serverThreadPool;
@@ -74,7 +70,7 @@ public class ServerManager {
      * @param string La stringa da scrivere sulla console prova
      */
     public void writeOnConsole(String string) {
-        viewFactory.mainWindowController.printOnConsole(string);
+        viewManager.mainWindowController.printOnConsole(string);
     }
 
     /**
@@ -98,8 +94,8 @@ public class ServerManager {
         }
     }
 
-    public void setViewFactory(ViewFactory viewFactory) {
-        this.viewFactory = viewFactory;
+    public void setViewFactory(ViewManager viewManager) {
+        this.viewManager = viewManager;
     }
 
 }
