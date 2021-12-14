@@ -117,6 +117,7 @@ public class ServerService implements Runnable {
                     for (EmailBean emailBean : l) {
                         if (emailBean.getEmailAccountAssociated().getAddress().equals(r)) {
                             addressFound = true;
+                            emailBean.addEmail(validEmailReceived);
                             break;
                         }
                     }
